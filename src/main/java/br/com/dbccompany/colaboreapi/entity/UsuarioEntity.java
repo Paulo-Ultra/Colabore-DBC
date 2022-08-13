@@ -1,5 +1,7 @@
 package br.com.dbccompany.colaboreapi.entity;
 
+import br.com.dbccompany.colaboreapi.dto.AutenticacaoCreateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,4 +23,9 @@ public class UsuarioEntity {
 
     @Column(name = "foto")
     private String foto;
+
+    /*@JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private AutenticacaoEntity autenticacaoEntity;*/
 }
