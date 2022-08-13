@@ -1,7 +1,6 @@
 package br.com.dbccompany.colaboreapi.security;
 
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
-import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.AutenticacaoService;
 import io.jsonwebtoken.Claims;
@@ -30,14 +29,14 @@ public class TokenService {
 
 
     //criando um token JWT
-    public String getToken(UsuarioEntity usuarioEntity) throws RegraDeNegocioException {
+    public String getToken(AutenticacaoEntity autenticacaoEntity) throws RegraDeNegocioException {
 
         Date now = new Date();
         Date exp = new Date(now.getTime() + Long.valueOf(expiration)); //convertendo para long
 
         String token = Jwts.builder()
                 .setIssuer("colabore-api")
-                .claim(Claims.ID, usuarioEntity.getIdUsuario())
+                .claim(Claims.ID, autenticacaoEntity.getIdAutenticacao())
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -58,11 +57,11 @@ public class TokenService {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Integer idUsuario = body.get(Claims.ID, Integer.class);
+        Integer idAutenticacao = body.get(Claims.ID, Integer.class);
 
-        if (idUsuario != null) {
+        if (idAutenticacao != null) {
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                    new UsernamePasswordAuthenticationToken(idUsuario, null, Collections.emptyList());
+                    new UsernamePasswordAuthenticationToken(idAutenticacao, null, Collections.emptyList());
 
             return usernamePasswordAuthenticationToken;
         }
