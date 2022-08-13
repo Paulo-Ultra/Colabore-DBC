@@ -30,7 +30,7 @@ public class AutenticacaoController {
     private UsuarioService usuarioService;*/
 
     @Operation(summary = "Realiza o login de um usuário", description = "Realiza o login de um determinado usuário gerando seu respectivo token")
-    @PostMapping
+    @PostMapping("/login")
     public String auth(@RequestBody @Valid AutenticacaoCreateDto autenticacaoDto) throws RegraDeNegocioException {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
