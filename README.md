@@ -3,7 +3,7 @@
 <img src="https://user-images.githubusercontent.com/92181625/174544191-09485209-4752-4143-b750-688e5cbabe91.png">
 
 <h2>Seja Bem Vindo ao Back-End da API Colabore</h2>
-<h1 align="center">🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁</h1>
+<h1 align="center">🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚🎀🎁📚</h1>
 
 <h2> Sobre este Projeto </h2>
 
