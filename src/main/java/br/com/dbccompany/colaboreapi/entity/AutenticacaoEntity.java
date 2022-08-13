@@ -21,8 +21,8 @@ public class AutenticacaoEntity implements UserDetails {
     @Column(name = "id_autenticacao")
     private Integer idAutenticacao;
 
-    /*@Column(name = "id_usuario", insertable = false, updatable = false)
-    private Integer idUsuario;*/
+    @Column(name = "id_usuario", insertable = false, updatable = false)
+    private Integer idUsuario;
 
     @Column(name = "email")
     @NotEmpty
