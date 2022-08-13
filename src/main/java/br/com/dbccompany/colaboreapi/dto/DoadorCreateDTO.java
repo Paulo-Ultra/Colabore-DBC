@@ -3,9 +3,14 @@ package br.com.dbccompany.colaboreapi.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
-public class UsuarioDTO extends UsuarioCreateDTO {
+public class DoadorCreateDTO {
 
     @Schema(description = "Identificador do usuário")
     private Integer idUsuario;
+
+    @Schema(description = "Valor total doado")
+    private BigDecimal valor;
 }
