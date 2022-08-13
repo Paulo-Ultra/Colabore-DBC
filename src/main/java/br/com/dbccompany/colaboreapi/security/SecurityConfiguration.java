@@ -33,7 +33,7 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 // Adicionar regras de requisição
                 .authorizeHttpRequests((authz) ->
-                        authz.antMatchers("/", "/auth", "/auth/cadastro", "/auth/recuperar-login").permitAll()
+                        authz.antMatchers("/", "/autenticacao", "/autenticacao/cadastro", "/autenticacao/recuperar-login").permitAll()
                                 .anyRequest().authenticated());
         // Adicionar filtro do token
         http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
