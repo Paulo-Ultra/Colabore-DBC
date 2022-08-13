@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.Email;
 
 @Data
-public class AutenticacaoCreateDto {
+public class AutenticacaoCreateDTO {
 
     @Schema(example = "colabore@dbccompany.com.br")
     @Email (regexp = "@dbccompany.com.br")

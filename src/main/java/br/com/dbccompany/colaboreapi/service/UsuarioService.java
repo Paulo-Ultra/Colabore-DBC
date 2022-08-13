@@ -1,7 +1,7 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDto;
-import br.com.dbccompany.colaboreapi.dto.UsuarioDto;
+import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 
@@ -29,7 +29,7 @@ public class UsuarioService {
     @Autowired
     private AutenticacaoService autenticacaoService;
 
-    public UsuarioDto adicionar(UsuarioCreateDto usuarioCreateDto) {
+    public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDto) {
 
         UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
 
@@ -43,6 +43,6 @@ public class UsuarioService {
 
         autenticacaoRepository.save(autenticacaoEntity);
 
-        return objectMapper.convertValue(usuario, UsuarioDto.class);
+        return objectMapper.convertValue(usuario, UsuarioDTO.class);
     }
 }

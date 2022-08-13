@@ -1,8 +1,8 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.AutenticacaoDto;
-import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDto;
-import br.com.dbccompany.colaboreapi.dto.UsuarioDto;
+import br.com.dbccompany.colaboreapi.dto.AutenticacaoDTO;
+import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.security.TokenService;
@@ -34,7 +34,7 @@ public class AutenticacaoController {
 
     @Operation(summary = "Realiza o login de um usuário", description = "Realiza o login de um determinado usuário gerando seu respectivo token")
     @PostMapping("/login")
-    public String auth(@RequestBody @Valid AutenticacaoDto autenticacaoCreateDto) throws RegraDeNegocioException {
+    public String auth(@RequestBody @Valid AutenticacaoDTO autenticacaoCreateDto) throws RegraDeNegocioException {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(
@@ -54,7 +54,7 @@ public class AutenticacaoController {
 
     @Operation(summary = "realiza o registro de um usuário", description = "realiza o registro de um usuario, criptografando sua senha no banco de dados")
     @PostMapping("/registrar")
-    public UsuarioDto cadastrar (@RequestBody UsuarioCreateDto usuarioCreateDto) throws RegraDeNegocioException {
+    public UsuarioDTO cadastrar (@RequestBody UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException {
         return usuarioService.adicionar(usuarioCreateDto);
     }
 }
