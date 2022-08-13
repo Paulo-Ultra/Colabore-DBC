@@ -20,7 +20,7 @@ create table autenticacao(
           references usuario(id_usuario) on delete cascade
 );
 
-create sequence seq_comentario
+create sequence seq_autenticacao
 increment 1
 start 1;
 
