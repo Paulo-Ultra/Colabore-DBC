@@ -56,7 +56,7 @@ public class AutenticacaoService {
 
     public AutenticacaoEntity findByIdUsuario(Integer idUsuario) throws RegraDeNegocioException {
         AutenticacaoEntity userLoginRecuperado = autenticacaoRepository.findAll().stream()
-                //.filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
+                .filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
         return userLoginRecuperado;

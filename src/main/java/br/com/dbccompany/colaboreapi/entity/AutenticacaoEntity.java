@@ -1,5 +1,6 @@
 package br.com.dbccompany.colaboreapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,6 +32,11 @@ public class AutenticacaoEntity implements UserDetails {
     @Column(name = "senha")
     @NotEmpty
     private String senha;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private UsuarioEntity usuarioEntity;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
