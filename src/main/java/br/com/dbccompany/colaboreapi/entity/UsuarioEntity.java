@@ -1,9 +1,11 @@
 package br.com.dbccompany.colaboreapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,4 +23,11 @@ public class UsuarioEntity {
 
     @Column(name = "foto")
     private String foto;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "usuario",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<CampanhaEntity> campanha;
 }

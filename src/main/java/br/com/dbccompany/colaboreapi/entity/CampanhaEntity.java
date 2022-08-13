@@ -1,5 +1,6 @@
 package br.com.dbccompany.colaboreapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,4 +44,9 @@ public class CampanhaEntity {
 
     @Column(name = "ultima_alteracao")
     private LocalDateTime ultimaAlteracao;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private UsuarioEntity usuario;
 }

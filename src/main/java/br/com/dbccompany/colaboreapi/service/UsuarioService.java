@@ -17,8 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,18 +43,28 @@ public class UsuarioService {
         validarEmail(usuarioCreateDto.getAutenticacaoDto().getEmail());
 
         UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
-
         UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
 
         AutenticacaoEntity autenticacaoEntity = objectMapper.convertValue(usuarioCreateDto.getAutenticacaoDto(), AutenticacaoEntity.class);
 
         autenticacaoEntity.setUsuarioEntity(usuario);
-
         autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(autenticacaoEntity.getSenha()));
-
         autenticacaoRepository.save(autenticacaoEntity);
 
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
+    }
+
+    public List<UsuarioDTO> listar() throws RegraDeNegocioException {
+        Integer idLoggedUser = autenticacaoService.getIdLoggedUser();
+        AutenticacaoEntity usuarioLogadoEntity = autenticacaoService.findById(idLoggedUser);
+
+        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
+
+        localizarUsuario(id);
+        return usuarioRepository.findById(id).stream()
+                .filter(usuario -> usuario.getIdUsuario().equals(id))
+                .map(usuario -> objectMapper.convertValue(usuario, UsuarioDTO.class))
+                .collect(Collectors.toList());
     }
 
     public void validarEmail(String emailParaValidar) throws RegraDeNegocioException {
@@ -61,5 +73,13 @@ public class UsuarioService {
         } else {
             throw new RegraDeNegocioException("Padrão de e-mail incorreto");
         }
+    }
+
+    public UsuarioEntity localizarUsuario(Integer idUsuario) throws RegraDeNegocioException {
+        UsuarioEntity usuarioRecuperado = usuarioRepository.findAll().stream()
+                .filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
+                .findFirst()
+                .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
+        return usuarioRecuperado;
     }
 }
