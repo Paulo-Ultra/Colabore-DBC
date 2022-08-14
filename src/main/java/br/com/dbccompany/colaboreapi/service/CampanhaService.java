@@ -2,17 +2,17 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.CampanhaDTO;
-import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,11 +41,46 @@ public class CampanhaService {
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
 
-    private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
+    public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
+        Integer id = usuarioService.idUsuarioLogado();
+        UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
+        if (!campanhaRepository.findAll().isEmpty()){
+            return campanhaRepository.findAll().stream()
+                    .map(campanhaEntity -> {
+                        CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
+                        return campanhaDTO;
+                    }).toList();
+        } else {
+            throw new RegraDeNegocioException("Não foi possível realizar a listagem das campanhas");
+        }
+    }
+
+    public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+        return campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
+                .stream().map(campanhaEntity -> {
+                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                    return campanhaDTO;
+                }).collect(Collectors.toList());
+    }
+
+     private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
     private CampanhaEntity retornarEntity(CampanhaCreateDTO campanhaCreateDTO) {
         return objectMapper.convertValue(campanhaCreateDTO, CampanhaEntity.class);
+    }
+
+    private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaNaoEncontradaException {
+        return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));
+    }
+
+    //Verifica por meio de query se pelo id da campanha há algum usuário logado
+    private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+        campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
+                .stream()
+                .filter(campanhaEntity -> campanhaEntity.getIdCampanha().equals(idCampanha))
+                .findFirst()
+                .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
     }
 }
