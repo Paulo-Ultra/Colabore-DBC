@@ -1,5 +1,6 @@
-package br.com.dbccompany.colaboreapi.dto;
+package br.com.dbccompany.colaboreapi.dto.usuario;
 
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
