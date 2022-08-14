@@ -60,4 +60,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         body.put("message", exception.getMessage());
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CampanhaNaoEncontradaException.class)
+    public ResponseEntity<Object> handleException(CampanhaNaoEncontradaException exception) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("message", exception.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
 }

@@ -1,10 +1,12 @@
 package br.com.dbccompany.colaboreapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,4 +24,13 @@ public class DoadorEntity {
 
     @Column(name = "valor")
     private BigDecimal valor;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "campanha_x_doador",
+            joinColumns = @JoinColumn(name = "id_doador"),
+            inverseJoinColumns = @JoinColumn(name = "id_campanha")
+    )
+    private Set<CampanhaEntity> campanhaEntities;
 }

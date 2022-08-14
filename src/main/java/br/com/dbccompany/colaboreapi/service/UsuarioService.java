@@ -1,7 +1,7 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 
@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,5 +79,13 @@ public class UsuarioService {
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
         return usuarioRecuperado;
+    }
+
+    public Integer idUsuarioLogado() throws RegraDeNegocioException {
+        Integer idLoggedUser = autenticacaoService.getIdLoggedUser();
+        AutenticacaoEntity usuarioLogadoEntity = autenticacaoService.findById(idLoggedUser);
+
+        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
+        return id;
     }
 }

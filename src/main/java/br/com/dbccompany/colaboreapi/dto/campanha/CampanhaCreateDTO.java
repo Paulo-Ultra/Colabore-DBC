@@ -1,4 +1,4 @@
-package br.com.dbccompany.colaboreapi.dto;
+package br.com.dbccompany.colaboreapi.dto.campanha;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class CampanhaCreateDTO {
 
-    @Schema(description = "Identificador do usuário")
+    @Schema(hidden = true)
     private Integer idUsuario;
 
     @Schema(description = "Meta de arrecadação da campanha")
