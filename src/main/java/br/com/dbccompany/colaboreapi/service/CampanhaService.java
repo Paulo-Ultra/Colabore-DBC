@@ -9,6 +9,7 @@ import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CampanhaService {
 
     private final ObjectMapper objectMapper;
@@ -35,8 +37,8 @@ public class CampanhaService {
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
-        if (campanhaCreateDTO.getArrecadacao().equals(null)) {
-            campanhaCreateDTO.setArrecadacao(BigDecimal.valueOf(0));
+        if (campanhaCreateDTO.getArrecadacao() == null) {
+            campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
         }
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
