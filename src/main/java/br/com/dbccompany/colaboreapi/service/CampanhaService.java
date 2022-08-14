@@ -2,9 +2,6 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
-import br.com.dbccompany.colaboreapi.dto.CampanhaCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.CampanhaDTO;
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
@@ -23,7 +20,6 @@ import java.util.stream.Collectors;
 public class CampanhaService {
 
     private final ObjectMapper objectMapper;
-    private final AutenticacaoService autenticacaoService;
     private final UsuarioService usuarioService;
     private final CampanhaRepository campanhaRepository;
 
