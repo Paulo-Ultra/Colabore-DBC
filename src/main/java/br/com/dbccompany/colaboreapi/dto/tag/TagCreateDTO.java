@@ -1,4 +1,4 @@
-package br.com.dbccompany.colaboreapi.dto;
+package br.com.dbccompany.colaboreapi.dto.tag;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.UsuarioCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 

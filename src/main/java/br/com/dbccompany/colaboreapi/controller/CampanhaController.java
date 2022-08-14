@@ -1,7 +1,7 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.CampanhaCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.CampanhaService;
@@ -49,7 +49,7 @@ public class CampanhaController {
 
     @Operation(summary = "realiza a deleção da campanha do usuário logado", description = "delete de campanha pelo identificador no banco de dados")
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCampanha(@RequestParam Integer id) throws CampanhaNaoEncontradaException {
+    public ResponseEntity<Void> deleteCampanha(@RequestParam Integer id) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
         campanhaService.deletar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

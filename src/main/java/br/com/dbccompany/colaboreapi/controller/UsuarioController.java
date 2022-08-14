@@ -1,7 +1,6 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.UsuarioDTO;
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.AutenticacaoService;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
