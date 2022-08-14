@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -49,4 +50,20 @@ public class CampanhaEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private UsuarioEntity usuario;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "campanhaEntity",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<TagEntity> tagEntities;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "campanha_x_doador",
+            joinColumns = @JoinColumn(name = "id_campanha"),
+            inverseJoinColumns = @JoinColumn(name = "id_doador")
+    )
+    private Set<DoadorEntity> doadorEntities;
 }
