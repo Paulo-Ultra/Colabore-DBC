@@ -20,11 +20,8 @@ public class CampanhaService {
 
 
     private final ObjectMapper objectMapper;
-
     private final AutenticacaoService autenticacaoService;
-
     private final UsuarioService usuarioService;
-
     private final CampanhaRepository campanhaRepository;
 
     public CampanhaDTO adicionar(CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException {
@@ -43,7 +40,7 @@ public class CampanhaService {
 
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
         Integer id = usuarioService.idUsuarioLogado();
-        UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
+        usuarioService.localizarUsuario(id);
         if (!campanhaRepository.findAll().isEmpty()){
             return campanhaRepository.findAll().stream()
                     .map(campanhaEntity -> {
@@ -55,7 +52,7 @@ public class CampanhaService {
         }
     }
 
-    public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+    public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws RegraDeNegocioException {
         return campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
                 .stream().map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
