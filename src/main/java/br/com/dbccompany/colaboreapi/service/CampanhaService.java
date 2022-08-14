@@ -35,6 +35,10 @@ public class CampanhaService {
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
+        if (campanhaCreateDTO.getArrecadacao() == null) {
+            campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
+        }
+
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
 
