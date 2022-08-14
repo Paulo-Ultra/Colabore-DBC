@@ -39,4 +39,10 @@ public class CampanhaController {
     public ResponseEntity<List<CampanhaDTO>> listarCampanhasDoUsuario() throws RegraDeNegocioException, CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.listaDeCampanhasByUsuarioLogado(), HttpStatus.OK);
     }
+
+    @PutMapping("/editar")
+    public CampanhaDTO editar(@RequestParam Integer id,
+                              @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+        return campanhaService.editar(id, campanhaCreateDTO);
+    }
 }
