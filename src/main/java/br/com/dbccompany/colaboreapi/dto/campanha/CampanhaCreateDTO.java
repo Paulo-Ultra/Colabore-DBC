@@ -15,7 +15,7 @@ public class CampanhaCreateDTO {
     @Schema(description = "Meta de arrecadação da campanha")
     private BigDecimal meta;
 
-    @Schema(description = "Arrecadação da campanha", hidden = true)
+    @Schema(description = "Arrecadação da campanha")
     private BigDecimal arrecadacao;
 
     @Schema(description = "Título da campanha")
