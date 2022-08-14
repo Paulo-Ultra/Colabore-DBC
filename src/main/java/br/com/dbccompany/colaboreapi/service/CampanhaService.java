@@ -2,6 +2,9 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.CampanhaCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
@@ -11,13 +14,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CampanhaService {
-
 
     private final ObjectMapper objectMapper;
     private final AutenticacaoService autenticacaoService;
@@ -36,6 +39,29 @@ public class CampanhaService {
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
+    }
+
+    public CampanhaDTO editar(Integer id,
+                             CampanhaCreateDTO campanhaDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+
+        CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
+
+        Integer idUsuario = usuarioService.idUsuarioLogado();
+
+        UsuarioEntity usuarioCampanha = usuarioService.localizarUsuario(idUsuario);
+
+        campanhaRecuperada.setMeta(campanhaDTO.getMeta());
+        campanhaRecuperada.setTitulo(campanhaDTO.getTitulo());
+        campanhaRecuperada.setDescricao(campanhaDTO.getDescricao());
+        campanhaRecuperada.setFotoCampanha(campanhaDTO.getFotoCampanha());
+        campanhaRecuperada.setStatusMeta(campanhaDTO.getStatusMeta());
+        campanhaRecuperada.setSituacao(campanhaDTO.getSituacao());
+        campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
+        campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
+
+        verificaCriadorDaCampanha(id);
+
+        return retornarDTO(campanhaRepository.save(campanhaRecuperada));
     }
 
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
