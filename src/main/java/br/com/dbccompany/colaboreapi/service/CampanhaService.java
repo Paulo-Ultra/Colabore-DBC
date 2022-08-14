@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class CampanhaService {
 
     private final ObjectMapper objectMapper;
+
     private final AutenticacaoService autenticacaoService;
     private final UsuarioService usuarioService;
     private final CampanhaRepository campanhaRepository;
@@ -35,6 +37,10 @@ public class CampanhaService {
 
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
+
+        if (campanhaCreateDTO.getArrecadacao().equals(null)) {
+            campanhaCreateDTO.setArrecadacao(BigDecimal.valueOf(0));
+        }
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
