@@ -40,9 +40,10 @@ public class CampanhaController {
         return new ResponseEntity<>(campanhaService.listaDeCampanhasByUsuarioLogado(), HttpStatus.OK);
     }
 
-    @PutMapping("/editar")
-    public CampanhaDTO editar(@RequestParam Integer id,
-                              @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
-        return campanhaService.editar(id, campanhaCreateDTO);
+    @Operation(summary = "realiza a deleção da campanha do usuário logado", description = "delete de campanha pelo identificador no banco de dados")
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteCampanha(@RequestParam Integer id) throws CampanhaNaoEncontradaException {
+        campanhaService.deletar(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
