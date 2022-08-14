@@ -16,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -81,5 +79,13 @@ public class UsuarioService {
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
         return usuarioRecuperado;
+    }
+
+    public Integer idUsuarioLogado() throws RegraDeNegocioException {
+        Integer idLoggedUser = autenticacaoService.getIdLoggedUser();
+        AutenticacaoEntity usuarioLogadoEntity = autenticacaoService.findById(idLoggedUser);
+
+        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
+        return id;
     }
 }

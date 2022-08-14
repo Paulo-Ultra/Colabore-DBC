@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class CampanhaCreateDTO {
 
-    @Schema(description = "Identificador do usuário")
+    @Schema(hidden = true)
     private Integer idUsuario;
 
     @Schema(description = "Meta de arrecadação da campanha")
