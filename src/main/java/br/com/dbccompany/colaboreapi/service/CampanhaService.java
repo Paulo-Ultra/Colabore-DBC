@@ -60,6 +60,11 @@ public class CampanhaService {
                 }).collect(Collectors.toList());
     }
 
+    public void deletar(Integer id) throws CampanhaNaoEncontradaException {
+        CampanhaEntity campanhaEntity = buscarIdCampanha(id);
+        campanhaRepository.delete(campanhaEntity);
+    }
+
      private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
