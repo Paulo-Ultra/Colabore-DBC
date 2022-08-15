@@ -24,7 +24,12 @@ public class TagEntity {
     @Column(name = "nome_tag")
     private String nomeTag;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_campanha", referencedColumnName = "id_campanha")
-    private CampanhaEntity campanhaEntity;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "campanha_x_tag",
+            joinColumns = @JoinColumn(name = "id_tag"),
+            inverseJoinColumns = @JoinColumn(name = "id_campanha")
+    )
+    private Set<CampanhaEntity> campanhaEntities;
 }

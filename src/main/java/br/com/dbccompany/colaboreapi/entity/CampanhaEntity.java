@@ -34,7 +34,7 @@ public class CampanhaEntity {
     @Column(name = "descricao")
     private String descricao;
 
-    @Column(name = "foto")
+    @Column(name = "foto_capa")
     private String fotoCampanha;
 
     @Column(name = "status_meta")
@@ -52,10 +52,12 @@ public class CampanhaEntity {
     private UsuarioEntity usuario;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "campanhaEntity",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "campanha_x_tag",
+            joinColumns = @JoinColumn(name = "id_campanha"),
+            inverseJoinColumns = @JoinColumn(name = "id_tag")
+    )
     private Set<TagEntity> tagEntities;
 
     @JsonIgnore

@@ -111,7 +111,6 @@ public class CampanhaService {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));
     }
 
-    //Verifica por meio de query se pelo id da campanha há algum usuário logado
     private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
         campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
                 .stream()
