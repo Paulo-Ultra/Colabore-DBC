@@ -53,4 +53,10 @@ public class CampanhaController {
         campanhaService.deletar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Operation(summary = "realiza a listagem da campanha pelo id informado", description = "lista as informações da campanha pelo id no banco de dados")
+    @GetMapping("/campanhaPeloId")
+    public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+        return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
+    }
 }
