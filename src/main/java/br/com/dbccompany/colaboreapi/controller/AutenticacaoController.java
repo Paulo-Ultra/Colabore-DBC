@@ -58,7 +58,7 @@ public class AutenticacaoController {
         return usuarioService.adicionar(usuarioCreateDto);
     }
     @Operation(summary = "realiza o registro de um usuário", description = "realiza o registro de um usuario, criptografando sua senha no banco de dados")
-    @PostMapping("/registrar")
+    @PostMapping("/registrarComFoto")
     public UsuarioDTO cadastrarComFoto (@ModelAttribute UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException, AmazonS3Exception {
         return usuarioService.adicionarComFoto(usuarioCreateDto);
     }
