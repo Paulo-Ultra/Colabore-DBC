@@ -65,6 +65,12 @@ public class CampanhaService {
         return retornarDTO(campanhaRepository.save(campanhaRecuperada));
     }
 
+    public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaNaoEncontradaException {
+        CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
+        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+            return campanhaDTO;
+    }
+
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
         Integer id = usuarioService.idUsuarioLogado();
         usuarioService.localizarUsuario(id);
