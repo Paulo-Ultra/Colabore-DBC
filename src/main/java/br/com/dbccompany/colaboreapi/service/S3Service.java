@@ -17,7 +17,7 @@ public class S3Service {
     @Value("${s3.bucket}")
     private String bucket;
 
-    private final AmazonS3 s3Client;
+    /*private final AmazonS3 s3Client;
 
     public URI uploadFile(MultipartFile multipartFile) throws AmazonS3Exception {
         try {
@@ -28,5 +28,5 @@ public class S3Service {
         } catch (IOException ex) {
             throw new AmazonS3Exception("Erro ao salvar a imagem!");
         }
-    }
+    }*/
 }
