@@ -54,7 +54,7 @@ public class CampanhaService {
         campanhaRecuperada.setMeta(campanhaDTO.getMeta());
         campanhaRecuperada.setTitulo(campanhaDTO.getTitulo());
         campanhaRecuperada.setDescricao(campanhaDTO.getDescricao());
-        campanhaRecuperada.setFotoCampanha(campanhaDTO.getFotoCampanha());
+        campanhaRecuperada.setFotoCampanha(campanhaDTO.getFotoCampanha().toString());
         campanhaRecuperada.setStatusMeta(campanhaDTO.getStatusMeta());
         campanhaRecuperada.setSituacao(campanhaDTO.getSituacao());
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());

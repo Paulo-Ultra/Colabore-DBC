@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.dto.campanha;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class CampanhaCreateDTO {
     private String descricao;
 
     @Schema(description = "Foto da campanha")
-    private String fotoCampanha;
+    private MultipartFile fotoCampanha;
 
     @Schema(description = "Status de conclusão ou não da meta")
     private Boolean statusMeta;

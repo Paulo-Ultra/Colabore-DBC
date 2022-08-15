@@ -3,6 +3,7 @@ package br.com.dbccompany.colaboreapi.dto.usuario;
 import br.com.dbccompany.colaboreapi.dto.autenticacao.AutenticacaoDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class UsuarioCreateDTO {
@@ -11,7 +12,7 @@ public class UsuarioCreateDTO {
     private String nome;
 
     @Schema(description = "Foto do usuário")
-    private String foto;
+    private MultipartFile foto;
 
     private AutenticacaoDTO autenticacaoDto;
 }

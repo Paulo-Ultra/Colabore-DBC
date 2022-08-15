@@ -5,36 +5,38 @@ import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.AutenticacaoRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.List;
 
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UsuarioService {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private AutenticacaoRepository autenticacaoRepository;
+    private final AutenticacaoRepository autenticacaoRepository;
 
-    @Autowired
-    private AutenticacaoService autenticacaoService;
+    private final AutenticacaoService autenticacaoService;
+
+    private final S3Service s3Service;
 
     public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException {
 
@@ -42,6 +44,25 @@ public class UsuarioService {
 
         UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
         UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
+
+        AutenticacaoEntity autenticacaoEntity = objectMapper.convertValue(usuarioCreateDto.getAutenticacaoDto(), AutenticacaoEntity.class);
+
+        autenticacaoEntity.setUsuarioEntity(usuario);
+        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(autenticacaoEntity.getSenha()));
+        autenticacaoRepository.save(autenticacaoEntity);
+
+        return objectMapper.convertValue(usuario, UsuarioDTO.class);
+    }
+
+    public UsuarioDTO adicionarComFoto(UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException, AmazonS3Exception {
+
+        validarEmail(usuarioCreateDto.getAutenticacaoDto().getEmail());
+
+        UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
+
+        UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
+        URI uri = s3Service.uploadFile(usuarioCreateDto.getFoto());
+        usuario.setFoto(uri.toString());
 
         AutenticacaoEntity autenticacaoEntity = objectMapper.convertValue(usuarioCreateDto.getAutenticacaoDto(), AutenticacaoEntity.class);
 

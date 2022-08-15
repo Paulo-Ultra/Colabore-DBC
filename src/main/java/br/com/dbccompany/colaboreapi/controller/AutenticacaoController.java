@@ -4,6 +4,7 @@ import br.com.dbccompany.colaboreapi.dto.autenticacao.AutenticacaoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.security.TokenService;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
@@ -29,8 +30,7 @@ public class AutenticacaoController {
 
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     @Operation(summary = "Realiza o login de um usuário", description = "Realiza o login de um determinado usuário gerando seu respectivo token")
     @PostMapping("/login")
@@ -57,4 +57,10 @@ public class AutenticacaoController {
     public UsuarioDTO cadastrar (@RequestBody UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException {
         return usuarioService.adicionar(usuarioCreateDto);
     }
+    @Operation(summary = "realiza o registro de um usuário", description = "realiza o registro de um usuario, criptografando sua senha no banco de dados")
+    @PostMapping("/registrar")
+    public UsuarioDTO cadastrarComFoto (@ModelAttribute UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException, AmazonS3Exception {
+        return usuarioService.adicionarComFoto(usuarioCreateDto);
+    }
+
 }
