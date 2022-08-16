@@ -3,6 +3,7 @@ package br.com.dbccompany.colaboreapi.service;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
@@ -57,23 +58,10 @@ public class UsuarioService {
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
     }
 
-//    public List<UsuarioDTO> listar() throws RegraDeNegocioException {
-//        Integer idLoggedUser = getIdLoggedUser();
-//        UsuarioEntity usuarioLogadoEntity = getIdLoggedUser();
-//
-//        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
-//
-//        localizarUsuario(id);
-//        return usuarioRepository.findById(id).stream()
-//                .filter(usuario -> usuario.getIdUsuario().equals(id))
-//                .map(this::convertToDTO)
-//                .toList();
-//    }
-
-    public List<UsuarioDTO> dadosUsuarioLogado() throws RegraDeNegocioException {
+    public List<UsuarioSemSenhaDTO> dadosUsuarioLogado() throws RegraDeNegocioException {
         return usuarioRepository.findById(getIdUsuarioLogado())
                 .stream().map(usuarioEntity -> {
-                    UsuarioDTO usuarioDTO = convertToDTO(usuarioEntity);
+                    UsuarioSemSenhaDTO  usuarioDTO = convertToSemSenhaDTO(usuarioEntity);
                     return usuarioDTO;
                 }).collect(Collectors.toList());
     }
@@ -125,5 +113,9 @@ public class UsuarioService {
     }
     public UsuarioDTO convertToDTO (UsuarioEntity usuarioEntity) {
         return objectMapper.convertValue(usuarioEntity, UsuarioDTO.class);
+    }
+
+    public UsuarioSemSenhaDTO convertToSemSenhaDTO (UsuarioEntity usuarioEntity) {
+        return objectMapper.convertValue(usuarioEntity, UsuarioSemSenhaDTO.class);
     }
 }

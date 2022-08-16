@@ -1,6 +1,7 @@
 package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class UsuarioController {
 //    }
 
     @GetMapping("/dadosUsuario")
-    public ResponseEntity<List<UsuarioDTO>> findById() throws RegraDeNegocioException {
+    public ResponseEntity<List<UsuarioSemSenhaDTO>> findLoggedUser() throws RegraDeNegocioException {
         return new ResponseEntity<>(usuarioService.dadosUsuarioLogado(), HttpStatus.OK);
     }
 }

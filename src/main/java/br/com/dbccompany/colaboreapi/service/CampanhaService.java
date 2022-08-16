@@ -100,7 +100,7 @@ public class CampanhaService {
                 }).toList();
     }
 
-    public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws RegraDeNegocioException {
+    public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() {
         return campanhaRepository.findAllByIdUsuario(usuarioService.getIdUsuarioLogado())
                 .stream().map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
