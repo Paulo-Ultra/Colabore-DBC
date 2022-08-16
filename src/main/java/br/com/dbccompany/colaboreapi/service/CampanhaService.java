@@ -133,4 +133,12 @@ public class CampanhaService {
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
     }
+
+    public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
+        CampanhaEntity campanhaRecuperada = campanhaRepository.findAll().stream()
+                .filter(campanha -> campanha.getIdCampanha().equals(idCampanha))
+                .findFirst()
+                .orElseThrow(() -> new RegraDeNegocioException("Campanha não encontrada"));
+        return campanhaRecuperada;
+    }
 }

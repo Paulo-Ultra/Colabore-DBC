@@ -103,10 +103,4 @@ public class UsuarioService {
         Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
         return id;
     }
-
-    public UsuarioEntity teste(UsuarioCreateDTO usuarioCreateDTO) {
-        UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setNome(usuarioCreateDTO.getNome());
-        return usuarioEntity;
-    }
 }

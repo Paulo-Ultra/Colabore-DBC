@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -32,8 +33,18 @@ public class UsuarioEntity {
             orphanRemoval = true)
     private Set<CampanhaEntity> campanha;
 
-   /* @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "id_doador", referencedColumnName = "id_doador")
-    private DoadorEntity doador;*/
+    /*@JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY,
+            mappedBy = "usuario",         //Indica o lado inverso do relacionamento
+            cascade = CascadeType.ALL,   //Faz a cascata para deletar
+            orphanRemoval = true)        //Deleta os órfãos
+    private Set<DoadorEntity> doador;*/
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "campanha_x_doador",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_doador"))
+    private List<DoadorEntity> doador;
+
 }
