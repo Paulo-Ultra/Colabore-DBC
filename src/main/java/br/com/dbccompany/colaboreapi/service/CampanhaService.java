@@ -94,15 +94,11 @@ public class CampanhaService {
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
         Integer id = usuarioService.idUsuarioLogado();
         usuarioService.localizarUsuario(id);
-        if (!campanhaRepository.findAll().isEmpty()){
-            return campanhaRepository.findAll().stream()
-                    .map(campanhaEntity -> {
-                        CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
-                        return campanhaDTO;
-                    }).toList();
-        } else {
-            throw new RegraDeNegocioException("Não foi possível realizar a listagem das campanhas");
-        }
+        return campanhaRepository.findAll().stream()
+                .map(campanhaEntity -> {
+                    CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
+                    return campanhaDTO;
+                }).toList();
     }
 
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws RegraDeNegocioException {
@@ -132,9 +128,8 @@ public class CampanhaService {
     }
 
     private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
-        campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
+        campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.idUsuarioLogado(), idCampanha)
                 .stream()
-                .filter(campanhaEntity -> campanhaEntity.getIdCampanha().equals(idCampanha))
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
     }
