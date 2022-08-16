@@ -1,7 +1,7 @@
 package br.com.dbccompany.colaboreapi.security;
 
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
-import br.com.dbccompany.colaboreapi.service.AutenticacaoService;
+import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,26 +14,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthenticationService implements UserDetailsService {
 
-    private final AutenticacaoService autenticacaoService;
+    private final UsuarioService usuarioService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        //buscar usuário pelo login
-        Optional<AutenticacaoEntity> optionalAutenticacaoEntity = autenticacaoService.findByEmail(username);
+
+        Optional<UsuarioEntity> optionalAutenticacaoEntity = usuarioService.findByEmail(username);
 
         return optionalAutenticacaoEntity
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário Inválido"));
-
     }
-
-   /* @Override //2:11
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        //buscar usuário pelo login
-        Optional<AutenticacaoEntity> optionalAutenticacaoEntity = usuarioService.findByLogin(username);
-
-        return optionalAutenticacaoEntity
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário Inválido"));
-
-    }*/
 }

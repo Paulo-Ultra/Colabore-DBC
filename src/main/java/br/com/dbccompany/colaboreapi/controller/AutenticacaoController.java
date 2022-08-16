@@ -1,16 +1,14 @@
 package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.autenticacao.AutenticacaoDTO;
-import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
+import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.security.TokenService;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -49,7 +48,7 @@ public class AutenticacaoController {
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         Object usuarioLogado = authentication.getPrincipal();
-        AutenticacaoEntity autenticacaoEntity = (AutenticacaoEntity) usuarioLogado;
+        UsuarioEntity autenticacaoEntity = (UsuarioEntity) usuarioLogado;
 
         String token = tokenService.getToken(autenticacaoEntity);
 
@@ -72,7 +71,7 @@ public class AutenticacaoController {
         Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
         Object usuarioLogado = authentication.getPrincipal();
-        AutenticacaoEntity autenticacaoEntity = (AutenticacaoEntity) usuarioLogado;
+        UsuarioEntity autenticacaoEntity = (UsuarioEntity) usuarioLogado;
 
         String token = tokenService.getToken(autenticacaoEntity);
 
@@ -84,7 +83,8 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<UsuarioCreateComFotoDTO> criarFotoUsuario(@Valid @ModelAttribute UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
-        return new ResponseEntity (usuarioService.adicionarFoto(usuarioCreateComFotoDTO), HttpStatus.OK);
+    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
+        usuarioService.adicionarFoto(multipartFile);
+        return ResponseEntity.ok().build();
     }
 }

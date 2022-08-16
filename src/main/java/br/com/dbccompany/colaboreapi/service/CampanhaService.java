@@ -12,7 +12,6 @@ import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriBuilder;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -32,7 +31,7 @@ public class CampanhaService {
 
     public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
-        Integer id = usuarioService.idUsuarioLogado();
+        Integer id = usuarioService.getIdUsuarioLogado();
 
         UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
 
@@ -60,7 +59,7 @@ public class CampanhaService {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
-        Integer idUsuario = usuarioService.idUsuarioLogado();
+        Integer idUsuario = usuarioService.getIdUsuarioLogado();
 
         UsuarioEntity usuarioCampanha = usuarioService.localizarUsuario(idUsuario);
 
@@ -92,7 +91,7 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
-        Integer id = usuarioService.idUsuarioLogado();
+        Integer id = usuarioService.getIdUsuarioLogado();
         usuarioService.localizarUsuario(id);
         return campanhaRepository.findAll().stream()
                 .map(campanhaEntity -> {
@@ -102,7 +101,7 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() throws RegraDeNegocioException {
-        return campanhaRepository.findAllByIdUsuario(usuarioService.idUsuarioLogado())
+        return campanhaRepository.findAllByIdUsuario(usuarioService.getIdUsuarioLogado())
                 .stream().map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
                     return campanhaDTO;
@@ -128,7 +127,7 @@ public class CampanhaService {
     }
 
     private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
-        campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.idUsuarioLogado(), idCampanha)
+        campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdUsuarioLogado(), idCampanha)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));

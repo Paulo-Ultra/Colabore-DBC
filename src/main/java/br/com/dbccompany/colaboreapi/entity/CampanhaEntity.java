@@ -3,12 +3,10 @@ package br.com.dbccompany.colaboreapi.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -69,5 +67,5 @@ public class CampanhaEntity {
             joinColumns = @JoinColumn(name = "id_campanha"),
             inverseJoinColumns = @JoinColumn(name = "id_doador")
     )
-    private List<DoadorEntity> doador;
+    private Set<DoadorEntity> doadores;
 }

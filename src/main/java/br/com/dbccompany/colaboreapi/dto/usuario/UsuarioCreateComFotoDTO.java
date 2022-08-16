@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioCreateComFotoDTO {
+public class UsuarioCreateComFotoDTO extends UsuarioCreateDTO {
 
     @Schema(description = "Foto do usuário")
     private MultipartFile foto;

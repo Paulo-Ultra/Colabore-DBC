@@ -30,7 +30,7 @@ public class DoadorService {
     private final ObjectMapper objectMapper;
 
     public DoadorDTO adicionar(Integer idCampanha, DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException {
-        Integer id = usuarioService.idUsuarioLogado();
+        Integer id = usuarioService.getIdUsuarioLogado();
 
         UsuarioEntity usuarioEntity = usuarioService.localizarUsuario(id);
         CampanhaEntity campanhaEntity = campanhaService.localizarCampanha(idCampanha);

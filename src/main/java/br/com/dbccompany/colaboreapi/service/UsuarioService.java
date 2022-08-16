@@ -1,28 +1,22 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
-import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
-
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
-import br.com.dbccompany.colaboreapi.repository.AutenticacaoRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.List;
-
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,51 +27,43 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
 
-    private final AutenticacaoRepository autenticacaoRepository;
-
-    private final AutenticacaoService autenticacaoService;
-
     private final S3Service s3Service;
 
-    public UsuarioDTO adicionarFoto(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
 
-        UsuarioEntity usuarioEntity = localizarUsuario(idUsuarioLogado());
-        URI uri = s3Service.uploadFile(usuarioCreateComFotoDTO.getFoto());
+        UsuarioEntity usuarioEntity = localizarUsuario(getIdUsuarioLogado());
+        URI uri = s3Service.uploadFile(multipartFile);
         usuarioEntity.setFoto(uri.toString());
-
-        UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
-        return objectMapper.convertValue(usuario, UsuarioDTO.class);
+        usuarioRepository.save(usuarioEntity);
     }
     public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {
 
         validarEmail(usuarioCreateDTO.getEmail());
 
         UsuarioEntity usuarioEntity = new UsuarioEntity();
-        AutenticacaoEntity autenticacaoEntity = new AutenticacaoEntity();
 
         usuarioEntity.setNome(usuarioCreateDTO.getNome());
-        autenticacaoEntity.setEmail(usuarioCreateDTO.getEmail());
-        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(usuarioCreateDTO.getSenha()));
+        usuarioEntity.setEmail(usuarioCreateDTO.getEmail());
+        usuarioEntity.setSenha(criptografarSenha(usuarioCreateDTO.getSenha()));
 
         UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
 
-        autenticacaoEntity.setUsuarioEntity(usuario);
-        autenticacaoRepository.save(autenticacaoEntity);
+        usuarioRepository.save(usuarioEntity);
 
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
     }
 
     public List<UsuarioDTO> listar() throws RegraDeNegocioException {
-        Integer idLoggedUser = autenticacaoService.getIdLoggedUser();
-        AutenticacaoEntity usuarioLogadoEntity = autenticacaoService.findById(idLoggedUser);
+        Integer idLoggedUser = getIdLoggedUser();
+        UsuarioEntity usuarioLogadoEntity = getIdLoggedUser();
 
         Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
 
         localizarUsuario(id);
         return usuarioRepository.findById(id).stream()
                 .filter(usuario -> usuario.getIdUsuario().equals(id))
-                .map(usuario -> objectMapper.convertValue(usuario, UsuarioDTO.class))
-                .collect(Collectors.toList());
+                .map(this::convertToDTO)
+                .toList();
     }
 
     public void validarEmail(String emailParaValidar) throws RegraDeNegocioException {
@@ -88,6 +74,13 @@ public class UsuarioService {
         }
     }
 
+    public UsuarioDTO findLoginById(Integer idUsuario) throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(getIdUsuarioLogado())
+                .orElseThrow(() ->
+                        new RegraDeNegocioException( "Usuário não encontrado"));;
+        return convertToDTO(usuarioEntity);
+    }
+
     public UsuarioEntity localizarUsuario(Integer idUsuario) throws RegraDeNegocioException {
         UsuarioEntity usuarioRecuperado = usuarioRepository.findAll().stream()
                 .filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
@@ -96,11 +89,29 @@ public class UsuarioService {
         return usuarioRecuperado;
     }
 
-    public Integer idUsuarioLogado() throws RegraDeNegocioException {
-        Integer idLoggedUser = autenticacaoService.getIdLoggedUser();
-        AutenticacaoEntity usuarioLogadoEntity = autenticacaoService.findById(idLoggedUser);
+    public Integer getIdUsuarioLogado() {
+        Integer idLoggedUser = getIdLoggedUser();
+        return idLoggedUser;
+    }
 
-        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
-        return id;
+    public String criptografarSenha(String senha) {
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String criptografia = bCryptPasswordEncoder.encode(senha);
+        return criptografia;
+    }
+
+    public Optional<UsuarioEntity> findByEmail(String email) {
+        return usuarioRepository.findByEmail(email);
+    }
+
+    public Integer getIdLoggedUser() {
+        return (Integer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+    public UsuarioDTO getLoggedUser() throws RegraDeNegocioException {
+        return findLoginById(getIdLoggedUser());
+    }
+    public UsuarioDTO convertToDTO (UsuarioEntity usuarioEntity) {
+        return objectMapper.convertValue(usuarioEntity, UsuarioDTO.class);
     }
 }
