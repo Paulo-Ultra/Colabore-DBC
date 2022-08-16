@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class S3Service {
         try {
             InputStream inputStream = multipartFile.getInputStream();
             String fileName = multipartFile.getOriginalFilename();
+            fileName = UUID.randomUUID().toString();
             String contentType = multipartFile.getContentType();
             return uploadFile(inputStream, fileName, contentType);
         } catch (IOException ex) {
