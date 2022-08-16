@@ -38,11 +38,7 @@ public class CampanhaService {
 
         CampanhaEntity campanhaEntity = new CampanhaEntity();
 
-        campanhaEntity.setMeta(campanhaCreateComFotoDTO.getMeta());
-        campanhaEntity.setDescricao(campanhaCreateComFotoDTO.getDescricao());
-        campanhaEntity.setTitulo(campanhaCreateComFotoDTO.getTitulo());
-        campanhaEntity.setStatusMeta(campanhaCreateComFotoDTO.getStatusMeta());
-        campanhaEntity.setSituacao(campanhaCreateComFotoDTO.getSituacao());
+        extracted(campanhaCreateComFotoDTO, campanhaEntity);
 
         URI uri = s3Service.uploadFile(campanhaCreateComFotoDTO.getFotoCampanha());
         campanhaEntity.setFotoCampanha(uri.toString());
@@ -60,7 +56,7 @@ public class CampanhaService {
     }
 
     public CampanhaDTO editar(Integer id,
-                             CampanhaCreateComFotoDTO campanhaDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException, AmazonS3Exception {
+                              CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException, AmazonS3Exception {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
@@ -68,21 +64,25 @@ public class CampanhaService {
 
         UsuarioEntity usuarioCampanha = usuarioService.localizarUsuario(idUsuario);
 
-        campanhaRecuperada.setMeta(campanhaDTO.getMeta());
-        campanhaRecuperada.setTitulo(campanhaDTO.getTitulo());
-        campanhaRecuperada.setDescricao(campanhaDTO.getDescricao());
-        campanhaRecuperada.setFotoCampanha(campanhaDTO.getFotoCampanha().toString());
-        campanhaRecuperada.setStatusMeta(campanhaDTO.getStatusMeta());
-        campanhaRecuperada.setSituacao(campanhaDTO.getSituacao());
+        extracted(campanhaCreateComFotoDTO, campanhaRecuperada);
+
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
 
-        URI uri = s3Service.uploadFile(campanhaDTO.getFotoCampanha());
+        URI uri = s3Service.uploadFile(campanhaCreateComFotoDTO.getFotoCampanha());
         campanhaRecuperada.setFotoCampanha(uri.toString());
 
         verificaCriadorDaCampanha(id);
 
         return retornarDTO(campanhaRepository.save(campanhaRecuperada));
+    }
+
+    private static void extracted(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO, CampanhaEntity campanhaEntity) {
+        campanhaEntity.setMeta(campanhaCreateComFotoDTO.getMeta());
+        campanhaEntity.setDescricao(campanhaCreateComFotoDTO.getDescricao());
+        campanhaEntity.setTitulo(campanhaCreateComFotoDTO.getTitulo());
+        campanhaEntity.setStatusMeta(campanhaCreateComFotoDTO.getStatusMeta());
+        campanhaEntity.setSituacao(campanhaCreateComFotoDTO.getSituacao());
     }
 
     public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaNaoEncontradaException {
