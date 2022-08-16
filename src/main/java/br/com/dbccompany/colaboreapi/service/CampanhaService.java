@@ -1,17 +1,21 @@
 package br.com.dbccompany.colaboreapi.service;
 
+import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,13 +28,18 @@ public class CampanhaService {
     private final UsuarioService usuarioService;
     private final CampanhaRepository campanhaRepository;
 
-    public CampanhaDTO adicionar(CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException {
+    private final S3Service s3Service;
+
+    public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
         Integer id = usuarioService.idUsuarioLogado();
 
         UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
 
         CampanhaEntity campanhaEntity = retornarEntity(campanhaCreateDTO);
+
+        URI uri = s3Service.uploadFile(campanhaCreateDTO.getFotoCampanha());
+        campanhaEntity.setFotoCampanha(uri.toString());
 
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
@@ -43,7 +52,7 @@ public class CampanhaService {
     }
 
     public CampanhaDTO editar(Integer id,
-                             CampanhaCreateDTO campanhaDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+                             CampanhaCreateComFotoDTO campanhaDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException, AmazonS3Exception {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
@@ -59,6 +68,9 @@ public class CampanhaService {
         campanhaRecuperada.setSituacao(campanhaDTO.getSituacao());
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
+
+        URI uri = s3Service.uploadFile(campanhaDTO.getFotoCampanha());
+        campanhaRecuperada.setFotoCampanha(uri.toString());
 
         verificaCriadorDaCampanha(id);
 

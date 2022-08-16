@@ -1,18 +1,25 @@
 package br.com.dbccompany.colaboreapi.controller;
 
+import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.CampanhaService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @RequestMapping("/campanha")
@@ -23,8 +30,12 @@ public class CampanhaController {
     private final CampanhaService campanhaService;
 
     @Operation(summary = "realiza o cadastro de uma campanha", description = "realiza o cadastro de uma campanha no banco de dados")
-    @PostMapping("/cadastrar")
-    public ResponseEntity<CampanhaDTO> cadastrar (@RequestBody CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException {
+    @RequestMapping(
+            path = "/cadastrar",
+            method = POST,
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @ModelAttribute CampanhaCreateComFotoDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
         return new ResponseEntity<>(campanhaService.adicionar(campanhaCreateDTO), HttpStatus.CREATED);
     }
 
@@ -41,9 +52,13 @@ public class CampanhaController {
     }
 
     @Operation(summary = "realiza a edição da campanha do usuário logado", description = "efetua a edição de campanha pelo identificador no banco de dados")
-    @PutMapping("/editar")
+    @RequestMapping(
+            path = "/editar",
+            method = PUT,
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
     public ResponseEntity<CampanhaDTO> editar(@RequestParam Integer id,
-                                              @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+                                              @Valid @ModelAttribute CampanhaCreateComFotoDTO campanhaCreateDTO) throws CampanhaNaoEncontradaException, RegraDeNegocioException, AmazonS3Exception {
         return new ResponseEntity<>(campanhaService.editar(id, campanhaCreateDTO), HttpStatus.OK);
     }
 
@@ -56,7 +71,7 @@ public class CampanhaController {
 
     @Operation(summary = "realiza a listagem da campanha pelo id informado", description = "lista as informações da campanha pelo id no banco de dados")
     @GetMapping("/campanhaPeloId")
-    public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+    public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
     }
 }
