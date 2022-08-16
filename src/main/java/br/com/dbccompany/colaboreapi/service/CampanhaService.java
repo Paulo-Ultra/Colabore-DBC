@@ -30,23 +30,31 @@ public class CampanhaService {
 
     private final S3Service s3Service;
 
-    public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
         Integer id = usuarioService.idUsuarioLogado();
 
         UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
 
-        CampanhaEntity campanhaEntity = retornarEntity(campanhaCreateDTO);
+        CampanhaEntity campanhaEntity = new CampanhaEntity();
 
-        URI uri = s3Service.uploadFile(campanhaCreateDTO.getFotoCampanha());
+        campanhaEntity.setMeta(campanhaCreateComFotoDTO.getMeta());
+        campanhaEntity.setDescricao(campanhaCreateComFotoDTO.getDescricao());
+        campanhaEntity.setTitulo(campanhaCreateComFotoDTO.getTitulo());
+        campanhaEntity.setStatusMeta(campanhaCreateComFotoDTO.getStatusMeta());
+        campanhaEntity.setSituacao(campanhaCreateComFotoDTO.getSituacao());
+
+        URI uri = s3Service.uploadFile(campanhaCreateComFotoDTO.getFotoCampanha());
         campanhaEntity.setFotoCampanha(uri.toString());
 
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
-        if (campanhaCreateDTO.getArrecadacao() == null) {
+        if (campanhaCreateComFotoDTO.getArrecadacao() == null) {
             campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
         }
+
+        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }

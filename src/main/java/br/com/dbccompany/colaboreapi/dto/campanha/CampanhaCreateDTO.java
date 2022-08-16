@@ -30,6 +30,6 @@ public class CampanhaCreateDTO {
     @Schema(description = "Situação de atingimento de arrecadação da campanha")
     private Boolean situacao;
 
-    @Schema(description = "Data e hora da última arrecadação da campanha")
+    @Schema(description = "Data e hora da última arrecadação da campanha", hidden = true)
     private LocalDateTime ultimaAlteracao;
 }
