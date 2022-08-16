@@ -3,7 +3,6 @@ package br.com.dbccompany.colaboreapi.controller;
 import br.com.dbccompany.colaboreapi.dto.autenticacao.AutenticacaoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
@@ -11,8 +10,6 @@ import br.com.dbccompany.colaboreapi.security.TokenService;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import java.awt.*;
-
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 @RestController
 @RequestMapping("/autenticacao")
@@ -87,10 +81,10 @@ public class AutenticacaoController {
 
     @RequestMapping(
             path = "/cadastrarFoto",
-            method = PUT,
+            method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<UsuarioCreateComFotoDTO> criarFotoUsuario(@Valid @ModelAttribute UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
-        return new ResponseEntity (usuarioService.adicionarFoto(usuarioCreateComFotoDTO), HttpStatus.ACCEPTED);
+        return new ResponseEntity (usuarioService.adicionarFoto(usuarioCreateComFotoDTO), HttpStatus.OK);
     }
 }
