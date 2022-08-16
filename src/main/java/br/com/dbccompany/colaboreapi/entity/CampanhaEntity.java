@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -68,5 +69,5 @@ public class CampanhaEntity {
             joinColumns = @JoinColumn(name = "id_campanha"),
             inverseJoinColumns = @JoinColumn(name = "id_doador")
     )
-    private Set<DoadorEntity> doadorEntities;
+    private List<DoadorEntity> doador;
 }
