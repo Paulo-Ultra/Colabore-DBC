@@ -31,4 +31,9 @@ public class UsuarioEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private Set<CampanhaEntity> campanha;
+
+   /* @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "id_doador", referencedColumnName = "id_doador")
+    private DoadorEntity doador;*/
 }

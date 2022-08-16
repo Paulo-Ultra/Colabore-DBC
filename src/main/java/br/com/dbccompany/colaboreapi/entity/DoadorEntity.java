@@ -33,4 +33,9 @@ public class DoadorEntity {
             inverseJoinColumns = @JoinColumn(name = "id_campanha")
     )
     private Set<CampanhaEntity> campanhaEntities;
+
+    /*@JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
+    private UsuarioEntity usuario;*/
 }
