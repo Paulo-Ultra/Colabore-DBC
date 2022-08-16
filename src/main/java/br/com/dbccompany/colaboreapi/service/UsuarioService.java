@@ -39,19 +39,25 @@ public class UsuarioService {
 
     private final S3Service s3Service;
 
-    public UsuarioDTO adicionar(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public UsuarioDTO adicionarFoto(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
-        validarEmail(usuarioCreateComFotoDTO.getEmail());
+        UsuarioEntity usuarioEntity = localizarUsuario(idUsuarioLogado());
+        URI uri = s3Service.uploadFile(usuarioCreateComFotoDTO.getFoto());
+        usuarioEntity.setFoto(uri.toString());
+
+        UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
+        return objectMapper.convertValue(usuario, UsuarioDTO.class);
+    }
+    public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {
+
+        validarEmail(usuarioCreateDTO.getEmail());
 
         UsuarioEntity usuarioEntity = new UsuarioEntity();
         AutenticacaoEntity autenticacaoEntity = new AutenticacaoEntity();
 
-        usuarioEntity.setNome(usuarioCreateComFotoDTO.getNome());
-        autenticacaoEntity.setEmail(usuarioCreateComFotoDTO.getEmail());
-        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(usuarioCreateComFotoDTO.getSenha()));
-
-        URI uri = s3Service.uploadFile(usuarioCreateComFotoDTO.getFoto());
-        usuarioEntity.setFoto(uri.toString());
+        usuarioEntity.setNome(usuarioCreateDTO.getNome());
+        autenticacaoEntity.setEmail(usuarioCreateDTO.getEmail());
+        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(usuarioCreateDTO.getSenha()));
 
         UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
 
@@ -98,9 +104,9 @@ public class UsuarioService {
         return id;
     }
 
-    public UsuarioEntity teste(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) {
+    public UsuarioEntity teste(UsuarioCreateDTO usuarioCreateDTO) {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setNome(usuarioCreateComFotoDTO.getNome());
+        usuarioEntity.setNome(usuarioCreateDTO.getNome());
         return usuarioEntity;
     }
 }
