@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.UsuarioService;
@@ -22,13 +21,8 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-//    @GetMapping("/listar")
-//    public ResponseEntity<List<UsuarioDTO>> listar() throws RegraDeNegocioException {
-//        return new ResponseEntity<>(usuarioService.listar(), HttpStatus.OK);
-//    }
-
     @GetMapping("/dadosUsuario")
-    public ResponseEntity<List<UsuarioSemSenhaDTO>> findLoggedUser() throws RegraDeNegocioException {
-        return new ResponseEntity<>(usuarioService.dadosUsuarioLogado(), HttpStatus.OK);
+    public ResponseEntity<UsuarioSemSenhaDTO> findLoggedUser() throws RegraDeNegocioException {
+        return new ResponseEntity<>(usuarioService.retornarUsuarioLogado(), HttpStatus.OK);
     }
 }

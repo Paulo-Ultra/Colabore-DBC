@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 public class UsuarioSemSenhaDTO {
 
+    private Integer idUsuario;
+
     @Schema(description = "Nome do usuário")
     private String nome;
 

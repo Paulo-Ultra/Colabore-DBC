@@ -31,9 +31,7 @@ public class CampanhaService {
 
     public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
-        Integer id = usuarioService.getIdUsuarioLogado();
-
-        UsuarioEntity usuarioRecuperado = usuarioService.localizarUsuario(id);
+        UsuarioEntity usuarioRecuperado = usuarioService.getLoggedUser();
 
         CampanhaEntity campanhaEntity = new CampanhaEntity();
 
@@ -59,9 +57,7 @@ public class CampanhaService {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
-        Integer idUsuario = usuarioService.getIdUsuarioLogado();
-
-        UsuarioEntity usuarioCampanha = usuarioService.localizarUsuario(idUsuario);
+        UsuarioEntity usuarioCampanha = usuarioService.getLoggedUser();
 
         extracted(campanhaCreateComFotoDTO, campanhaRecuperada);
 
@@ -91,8 +87,7 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
-        Integer id = usuarioService.getIdUsuarioLogado();
-        usuarioService.localizarUsuario(id);
+        usuarioService.getLoggedUser();
         return campanhaRepository.findAll().stream()
                 .map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
@@ -101,7 +96,7 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() {
-        return campanhaRepository.findAllByIdUsuario(usuarioService.getIdUsuarioLogado())
+        return campanhaRepository.findAllByIdUsuario(usuarioService.getIdLoggedUser())
                 .stream().map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
                     return campanhaDTO;
@@ -127,12 +122,13 @@ public class CampanhaService {
     }
 
     private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
-        campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdUsuarioLogado(), idCampanha)
+        campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdLoggedUser(), idCampanha)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
     }
 
+    //Todo ajustar query
     public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
         CampanhaEntity campanhaRecuperada = campanhaRepository.findAll().stream()
                 .filter(campanha -> campanha.getIdCampanha().equals(idCampanha))

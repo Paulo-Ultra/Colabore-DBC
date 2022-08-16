@@ -1,13 +1,10 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
-import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
-import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -36,7 +32,7 @@ public class UsuarioService {
 
     public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
 
-        UsuarioEntity usuarioEntity = localizarUsuario(getIdUsuarioLogado());
+        UsuarioEntity usuarioEntity = getLoggedUser();
         URI uri = s3Service.uploadFile(multipartFile);
         usuarioEntity.setFoto(uri.toString());
         usuarioRepository.save(usuarioEntity);
@@ -58,12 +54,9 @@ public class UsuarioService {
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
     }
 
-    public List<UsuarioSemSenhaDTO> dadosUsuarioLogado() throws RegraDeNegocioException {
-        return usuarioRepository.findById(getIdUsuarioLogado())
-                .stream().map(usuarioEntity -> {
-                    UsuarioSemSenhaDTO  usuarioDTO = convertToSemSenhaDTO(usuarioEntity);
-                    return usuarioDTO;
-                }).collect(Collectors.toList());
+    public UsuarioSemSenhaDTO retornarUsuarioLogado() throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity = getLoggedUser();
+        return convertToSemSenhaDTO(usuarioEntity);
     }
 
     public void validarEmail(String emailParaValidar) throws RegraDeNegocioException {
@@ -75,23 +68,22 @@ public class UsuarioService {
     }
 
     public UsuarioDTO findLoginById(Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioEntity usuarioEntity = usuarioRepository.findById(getIdUsuarioLogado())
-                .orElseThrow(() ->
-                        new RegraDeNegocioException( "Usuário não encontrado"));;
+        UsuarioEntity usuarioEntity = findById(getIdLoggedUser());
         return convertToDTO(usuarioEntity);
     }
 
-    public UsuarioEntity localizarUsuario(Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioEntity usuarioRecuperado = usuarioRepository.findById(getIdUsuarioLogado()).stream()
-                .filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
+    private UsuarioEntity findById(Integer idUsuario) throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                        new RegraDeNegocioException( "Usuário não encontrado"));
+        return usuarioEntity;
+    }
+
+    public UsuarioEntity getLoggedUser() throws RegraDeNegocioException {
+        UsuarioEntity usuarioRecuperado = usuarioRepository.findById(getIdLoggedUser()).stream()
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));
         return usuarioRecuperado;
-    }
-
-    public Integer getIdUsuarioLogado() {
-        Integer idLoggedUser = getIdLoggedUser();
-        return idLoggedUser;
     }
 
     public String criptografarSenha(String senha) {
@@ -108,7 +100,7 @@ public class UsuarioService {
     public Integer getIdLoggedUser() {
         return (Integer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    public UsuarioDTO getLoggedUser() throws RegraDeNegocioException {
+    public UsuarioDTO getLoggedUserDTO() throws RegraDeNegocioException {
         return findLoginById(getIdLoggedUser());
     }
     public UsuarioDTO convertToDTO (UsuarioEntity usuarioEntity) {
