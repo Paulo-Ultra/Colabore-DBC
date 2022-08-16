@@ -1,6 +1,7 @@
 package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.autenticacao.AutenticacaoDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
@@ -12,6 +13,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +22,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
+import java.awt.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 @RequestMapping("/autenticacao")
@@ -52,15 +59,12 @@ public class AutenticacaoController {
         return token;
     }
 
-    @Operation(summary = "realiza o registro de um usuário", description = "realiza o registro de um usuario, criptografando sua senha no banco de dados")
-    @PostMapping("/registrar")
-    public UsuarioDTO cadastrar (@RequestBody UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException {
-        return usuarioService.adicionar(usuarioCreateDto);
+    @RequestMapping(
+            path = "/cadastrar",
+            method = POST,
+            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
+    )
+    public ResponseEntity<UsuarioDTO> criarUsuario(@Valid @ModelAttribute UsuarioCreateComFotoDTO usuarioCreateDTO) throws AmazonS3Exception, RegraDeNegocioException {
+        return ResponseEntity.ok(usuarioService.adicionar(usuarioCreateDTO));
     }
-    @Operation(summary = "realiza o registro de um usuário", description = "realiza o registro de um usuario, criptografando sua senha no banco de dados")
-    @PostMapping("/registrarComFoto")
-    public UsuarioDTO cadastrarComFoto (@ModelAttribute UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException, AmazonS3Exception {
-        return usuarioService.adicionarComFoto(usuarioCreateDto);
-    }
-
 }

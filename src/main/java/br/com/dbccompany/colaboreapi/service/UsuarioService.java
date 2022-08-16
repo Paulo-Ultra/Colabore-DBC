@@ -1,5 +1,6 @@
 package br.com.dbccompany.colaboreapi.service;
 
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.entity.AutenticacaoEntity;
@@ -38,36 +39,23 @@ public class UsuarioService {
 
     private final S3Service s3Service;
 
-    public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException {
+    public UsuarioDTO adicionar(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
-        validarEmail(usuarioCreateDto.getAutenticacaoDto().getEmail());
+        validarEmail(usuarioCreateComFotoDTO.getEmail());
 
-        UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
-        UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        AutenticacaoEntity autenticacaoEntity = new AutenticacaoEntity();
 
-        AutenticacaoEntity autenticacaoEntity = objectMapper.convertValue(usuarioCreateDto.getAutenticacaoDto(), AutenticacaoEntity.class);
+        usuarioEntity.setNome(usuarioCreateComFotoDTO.getNome());
+        autenticacaoEntity.setEmail(usuarioCreateComFotoDTO.getEmail());
+        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(usuarioCreateComFotoDTO.getSenha()));
 
-        autenticacaoEntity.setUsuarioEntity(usuario);
-        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(autenticacaoEntity.getSenha()));
-        autenticacaoRepository.save(autenticacaoEntity);
-
-        return objectMapper.convertValue(usuario, UsuarioDTO.class);
-    }
-
-    public UsuarioDTO adicionarComFoto(UsuarioCreateDTO usuarioCreateDto) throws RegraDeNegocioException, AmazonS3Exception {
-
-        validarEmail(usuarioCreateDto.getAutenticacaoDto().getEmail());
-
-        UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioCreateDto, UsuarioEntity.class);
+        URI uri = s3Service.uploadFile(usuarioCreateComFotoDTO.getFoto());
+        usuarioEntity.setFoto(uri.toString());
 
         UsuarioEntity usuario = usuarioRepository.save(usuarioEntity);
-        URI uri = s3Service.uploadFile(usuarioCreateDto.getFoto());
-        usuario.setFoto(uri.toString());
-
-        AutenticacaoEntity autenticacaoEntity = objectMapper.convertValue(usuarioCreateDto.getAutenticacaoDto(), AutenticacaoEntity.class);
 
         autenticacaoEntity.setUsuarioEntity(usuario);
-        autenticacaoEntity.setSenha(autenticacaoService.criptografarSenha(autenticacaoEntity.getSenha()));
         autenticacaoRepository.save(autenticacaoEntity);
 
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
@@ -108,5 +96,11 @@ public class UsuarioService {
 
         Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
         return id;
+    }
+
+    public UsuarioEntity teste(UsuarioCreateComFotoDTO usuarioCreateComFotoDTO) {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setNome(usuarioCreateComFotoDTO.getNome());
+        return usuarioEntity;
     }
 }

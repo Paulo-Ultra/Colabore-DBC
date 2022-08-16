@@ -11,8 +11,7 @@ public class UsuarioCreateDTO {
     @Schema(description = "Nome do usuário")
     private String nome;
 
-    @Schema(description = "Foto do usuário")
-    private MultipartFile foto;
+    private String email;
 
-    private AutenticacaoDTO autenticacaoDto;
+    private String senha;
 }

@@ -18,9 +18,9 @@ import java.net.URISyntaxException;
 public class S3Service {
 
     @Value("${s3.bucket}")
-    private String bucket;
+    private String bucketName;
 
-    private final AmazonS3 s3Client;
+    private final AmazonS3 amazonS3;
 
     public URI uploadFile(MultipartFile multipartFile) throws AmazonS3Exception {
         try {
@@ -33,12 +33,12 @@ public class S3Service {
         }
     }
 
-    public URI uploadFile (InputStream inputStream, String fileName, String contentType) throws AmazonS3Exception {
+    public URI uploadFile(InputStream inputStream, String fileName, String contentType) throws AmazonS3Exception {
         try{
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentType(contentType);
-            s3Client.putObject(bucket, fileName, inputStream, metadata);
-            return s3Client.getUrl(bucket, fileName).toURI();
+            amazonS3.putObject(bucketName, fileName, inputStream, metadata);
+            return amazonS3.getUrl(bucketName, fileName).toURI();
         } catch (URISyntaxException e) {
             throw new AmazonS3Exception("Erro ao salva imagem!");
         }
