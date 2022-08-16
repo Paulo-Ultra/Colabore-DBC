@@ -1,9 +1,12 @@
 package br.com.dbccompany.colaboreapi.service;
 
+import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
+import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
+import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,17 +57,25 @@ public class UsuarioService {
         return objectMapper.convertValue(usuario, UsuarioDTO.class);
     }
 
-    public List<UsuarioDTO> listar() throws RegraDeNegocioException {
-        Integer idLoggedUser = getIdLoggedUser();
-        UsuarioEntity usuarioLogadoEntity = getIdLoggedUser();
+//    public List<UsuarioDTO> listar() throws RegraDeNegocioException {
+//        Integer idLoggedUser = getIdLoggedUser();
+//        UsuarioEntity usuarioLogadoEntity = getIdLoggedUser();
+//
+//        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
+//
+//        localizarUsuario(id);
+//        return usuarioRepository.findById(id).stream()
+//                .filter(usuario -> usuario.getIdUsuario().equals(id))
+//                .map(this::convertToDTO)
+//                .toList();
+//    }
 
-        Integer id = (Integer) usuarioLogadoEntity.getIdUsuario();
-
-        localizarUsuario(id);
-        return usuarioRepository.findById(id).stream()
-                .filter(usuario -> usuario.getIdUsuario().equals(id))
-                .map(this::convertToDTO)
-                .toList();
+    public List<UsuarioDTO> dadosUsuarioLogado() throws RegraDeNegocioException {
+        return usuarioRepository.findById(getIdUsuarioLogado())
+                .stream().map(usuarioEntity -> {
+                    UsuarioDTO usuarioDTO = convertToDTO(usuarioEntity);
+                    return usuarioDTO;
+                }).collect(Collectors.toList());
     }
 
     public void validarEmail(String emailParaValidar) throws RegraDeNegocioException {
@@ -82,7 +94,7 @@ public class UsuarioService {
     }
 
     public UsuarioEntity localizarUsuario(Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioEntity usuarioRecuperado = usuarioRepository.findAll().stream()
+        UsuarioEntity usuarioRecuperado = usuarioRepository.findById(getIdUsuarioLogado()).stream()
                 .filter(usuario -> usuario.getIdUsuario().equals(idUsuario))
                 .findFirst()
                 .orElseThrow(() -> new RegraDeNegocioException("Usuário não encontrado"));

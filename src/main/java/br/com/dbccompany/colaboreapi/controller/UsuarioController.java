@@ -21,13 +21,13 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @GetMapping("/listar")
-    public ResponseEntity<List<UsuarioDTO>> listar() throws RegraDeNegocioException {
-        return new ResponseEntity<>(usuarioService.listar(), HttpStatus.OK);
-    }
+//    @GetMapping("/listar")
+//    public ResponseEntity<List<UsuarioDTO>> listar() throws RegraDeNegocioException {
+//        return new ResponseEntity<>(usuarioService.listar(), HttpStatus.OK);
+//    }
 
-    @GetMapping("/usuario")
-    public ResponseEntity<UsuarioDTO> findById(Integer idUsuario) throws RegraDeNegocioException {
-        return new ResponseEntity<>(usuarioService.findLoginById(idUsuario), HttpStatus.OK);
+    @GetMapping("/dadosUsuario")
+    public ResponseEntity<List<UsuarioDTO>> findById() throws RegraDeNegocioException {
+        return new ResponseEntity<>(usuarioService.dadosUsuarioLogado(), HttpStatus.OK);
     }
 }
