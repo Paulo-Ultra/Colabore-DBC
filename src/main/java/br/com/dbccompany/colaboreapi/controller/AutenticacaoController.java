@@ -64,7 +64,24 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<UsuarioDTO> criarUsuario(@Valid @ModelAttribute UsuarioCreateComFotoDTO usuarioCreateDTO) throws AmazonS3Exception, RegraDeNegocioException {
-        return ResponseEntity.ok(usuarioService.adicionar(usuarioCreateDTO));
+    public String criarUsuario(@Valid @ModelAttribute UsuarioCreateComFotoDTO usuarioCreateDTO) throws AmazonS3Exception, RegraDeNegocioException {
+        //return ResponseEntity.ok(usuarioService.adicionar(usuarioCreateDTO));
+
+        usuarioService.adicionar(usuarioCreateDTO);
+
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        usuarioCreateDTO.getEmail(),
+                        usuarioCreateDTO.getSenha()
+                );
+
+        Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        Object usuarioLogado = authentication.getPrincipal();
+        AutenticacaoEntity autenticacaoEntity = (AutenticacaoEntity) usuarioLogado;
+
+        String token = tokenService.getToken(autenticacaoEntity);
+
+        return token;
     }
 }
