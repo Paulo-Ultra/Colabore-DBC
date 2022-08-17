@@ -43,6 +43,9 @@ public class CampanhaEntity {
     @Column(name = "situacao")
     private Boolean situacao;
 
+    @Column(name = "data_limite")
+    private LocalDateTime dataLimite;
+
     @Column(name = "ultima_alteracao")
     private LocalDateTime ultimaAlteracao;
 

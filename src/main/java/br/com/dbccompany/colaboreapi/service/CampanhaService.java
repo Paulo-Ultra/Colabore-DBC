@@ -11,16 +11,19 @@ import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CampanhaService {
 
     private final ObjectMapper objectMapper;
@@ -49,6 +52,8 @@ public class CampanhaService {
 
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         campanhaEntity.setSituacao(true);
+
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
