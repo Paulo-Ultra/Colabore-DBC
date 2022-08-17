@@ -27,7 +27,7 @@ public class CampanhaCreateDTO {
     @Schema(description = "Status de conclusão ou não da meta")
     private Boolean statusMeta;
 
-    @Schema(description = "Situação de atingimento de arrecadação da campanha")
+    @Schema(description = "Situação de atingimento de arrecadação da campanha", hidden = true)
     private Boolean situacao;
 
     @Schema(description = "Data em que se encerra a campanha")

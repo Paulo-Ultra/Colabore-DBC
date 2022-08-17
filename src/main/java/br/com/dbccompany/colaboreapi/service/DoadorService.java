@@ -45,9 +45,21 @@ public class DoadorService {
 
         doadorRepository.save(doadorEntity);
 
-        campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
-
-        campanhaRepository.save(campanhaEntity);
+        if (campanhaEntity.getStatusMeta().equals(true)) {
+            if (campanhaEntity.getMeta().doubleValue() < doadorCreateDTO.getValor().doubleValue()) {
+                campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+                if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {
+                    campanhaEntity.setSituacao(false);
+                }
+            } else {
+                campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+                campanhaEntity.setSituacao(false);
+            }
+            campanhaRepository.save(campanhaEntity);
+        } else {
+            campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+            campanhaRepository.save(campanhaEntity);
+        }
 
         return retornarDoadorDTO(doadorEntity);
     }
