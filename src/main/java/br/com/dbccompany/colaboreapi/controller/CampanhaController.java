@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,14 +30,20 @@ public class CampanhaController {
 
     private final CampanhaService campanhaService;
 
-    @Operation(summary = "realiza o cadastro de uma campanha", description = "realiza o cadastro de uma campanha no banco de dados")
+    @PostMapping("/cadastrar")
+    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
+        return new ResponseEntity<>(campanhaService.adicionar(campanhaCreateDTO), HttpStatus.CREATED);
+    }
+
     @RequestMapping(
-            path = "/cadastrar",
+            path = "/cadastrarFoto",
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @ModelAttribute CampanhaCreateComFotoDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
-        return new ResponseEntity<>(campanhaService.adicionar(campanhaCreateDTO), HttpStatus.CREATED);
+    public ResponseEntity<Void> cadastrarFoto (@ModelAttribute MultipartFile multipartFile,
+                                               @RequestParam Integer idCampanha) throws RegraDeNegocioException, AmazonS3Exception {
+        campanhaService.adicionarFoto(idCampanha, multipartFile);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "realiza a listagem de todas as campanhas", description = "lista de todas as campanhas no banco de dados")
@@ -51,15 +58,10 @@ public class CampanhaController {
         return new ResponseEntity<>(campanhaService.listaDeCampanhasByUsuarioLogado(), HttpStatus.OK);
     }
 
-    @Operation(summary = "realiza a edição da campanha do usuário logado", description = "efetua a edição de campanha pelo identificador no banco de dados")
-    @RequestMapping(
-            path = "/editar",
-            method = PUT,
-            consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
-    )
-    public ResponseEntity<CampanhaDTO> editar(@RequestParam Integer id,
-                                              @Valid @ModelAttribute CampanhaCreateComFotoDTO campanhaCreateDTO) throws CampanhaNaoEncontradaException, RegraDeNegocioException, AmazonS3Exception {
-        return new ResponseEntity<>(campanhaService.editar(id, campanhaCreateDTO), HttpStatus.OK);
+    @PutMapping("/{idCampanha}")
+    public ResponseEntity<CampanhaDTO> editar(@PathVariable("idCampanha") Integer idCampanha,
+                                              @Valid @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+        return new ResponseEntity<>(campanhaService.editar(idCampanha, campanhaCreateDTO), HttpStatus.OK);
     }
 
     @Operation(summary = "realiza a deleção da campanha do usuário logado", description = "delete de campanha pelo identificador no banco de dados")

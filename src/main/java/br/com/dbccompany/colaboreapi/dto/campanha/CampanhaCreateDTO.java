@@ -34,4 +34,6 @@ public class CampanhaCreateDTO {
 
     @Schema(description = "Data e hora da última arrecadação da campanha", hidden = true)
     private LocalDateTime ultimaAlteracao;
+
+    private String fotoCampanha;
 }
