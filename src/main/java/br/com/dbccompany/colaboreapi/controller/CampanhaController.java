@@ -1,7 +1,6 @@
 package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
@@ -48,13 +47,13 @@ public class CampanhaController {
 
     @Operation(summary = "realiza a listagem de todas as campanhas", description = "lista de todas as campanhas no banco de dados")
     @GetMapping("/listar")
-    public ResponseEntity<List<CampanhaDTO>> listarCampanhas() throws RegraDeNegocioException, CampanhaNaoEncontradaException {
-        return new ResponseEntity<>(campanhaService.listaDeCampanhas(), HttpStatus.OK);
+    public ResponseEntity<List<CampanhaDTO>> listarCampanhas() {
+        return new ResponseEntity<>(campanhaService.localizarCampanhasAbertas(), HttpStatus.OK);
     }
 
     @Operation(summary = "realiza a listagem de todas as campanhas do usuário logado", description = "lista de todas as campanhas do usuário logado no banco de dados")
     @GetMapping("/listarCampanhasDoUsuario")
-    public ResponseEntity<List<CampanhaDTO>> listarCampanhasDoUsuario() throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+    public ResponseEntity<List<CampanhaDTO>> listarCampanhasDoUsuario() {
         return new ResponseEntity<>(campanhaService.listaDeCampanhasByUsuarioLogado(), HttpStatus.OK);
     }
 
@@ -76,4 +75,17 @@ public class CampanhaController {
     public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
     }
+
+    @Operation(summary = "realiza a listagem da campanha pelo id informado", description = "lista as informações da campanha pelo id no banco de dados")
+    @GetMapping("/campanhaPelaMeta")
+    public ResponseEntity<List<CampanhaDTO>> CampanhaPelaMeta() throws CampanhaNaoEncontradaException {
+        return new ResponseEntity<>(campanhaService.listarMetasCumpridas(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "realiza a listagem da campanha pelo id informado", description = "lista as informações da campanha pelo id no banco de dados")
+    @GetMapping("/campanhaPeloStatusMeta")
+    public ResponseEntity<List<CampanhaDTO>> CampanhaPeloStatusMeta() throws CampanhaNaoEncontradaException {
+        return new ResponseEntity<>(campanhaService.listarMetasCumpridas(), HttpStatus.OK);
+    }
+
 }
