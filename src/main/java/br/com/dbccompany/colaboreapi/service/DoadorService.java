@@ -47,7 +47,7 @@ public class DoadorService {
 
         doadorRepository.save(doadorEntity);
 
-        if (campanhaEntity.getEncerrarAutomaticamente().equals(false)) {
+        if (campanhaEntity.getEncerrarAutomaticamente().equals(true) && campanhaEntity.getStatusMeta().equals(false)) {
             if (campanhaEntity.getMeta().doubleValue() < doadorCreateDTO.getValor().doubleValue()) {
                 campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
                 if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {

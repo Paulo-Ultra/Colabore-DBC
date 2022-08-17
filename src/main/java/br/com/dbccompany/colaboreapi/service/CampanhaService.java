@@ -126,11 +126,6 @@ public class CampanhaService {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
-    private CampanhaEntity retornarEntity(CampanhaCreateDTO campanhaCreateDTO) {
-        return objectMapper.convertValue(campanhaCreateDTO, CampanhaEntity.class);
-    }
-
-
     private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaNaoEncontradaException {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));
     }

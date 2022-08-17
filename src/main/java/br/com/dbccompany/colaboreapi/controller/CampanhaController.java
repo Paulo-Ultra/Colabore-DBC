@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
@@ -20,7 +19,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.web.bind.annotation.RequestMethod.PUT;
+
 
 @RestController
 @RequestMapping("/campanha")
@@ -45,7 +44,6 @@ public class CampanhaController {
         campanhaService.adicionarFoto(idCampanha, multipartFile);
         return ResponseEntity.ok().build();
     }
-
 
     @Operation(summary = "realiza a listagem de todas as campanhas abertas", description = "lista de todas as campanhas com status aberta no banco de dados")
     @GetMapping("/listarCampanhasAbertas")
@@ -77,7 +75,6 @@ public class CampanhaController {
     public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
     }
-
 
     @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
             description = "lista as informações da campanha pelo status da meta como conclúídas no banco de dados")
