@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -40,7 +41,10 @@ public class CampanhaServiceTest {
         ReflectionTestUtils.setField(campanhaService, "objectMapper", objectMapper);
     }
 
+    @Test
+    public void deveTestarCreateComSucesso (){
 
+    }
 
     public static UsuarioEntity getUsuarioEntity(){
         UsuarioEntity usuarioEntity = new UsuarioEntity();
@@ -54,7 +58,7 @@ public class CampanhaServiceTest {
         return usuarioEntity;
     }
 
-    public static CampanhaEntity getCampanhaEntity(){
+    public static CampanhaEntity getCampanhaEntityEncerraAutomatico(){
         CampanhaEntity campanhaEntity = new CampanhaEntity();
         campanhaEntity.setIdCampanha(1);
         campanhaEntity.setFotoCampanha("foto_capa.jpeg");
@@ -63,6 +67,51 @@ public class CampanhaServiceTest {
         campanhaEntity.setDescricao("Doação de livros usados");
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         campanhaEntity.setMeta(new BigDecimal(2000.00));
+        campanhaEntity.setUsuario(getUsuarioEntity());
+        campanhaEntity.setDoadores(new HashSet<>());
+        campanhaEntity.setIdUsuario(1);
+        campanhaEntity.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
+        campanhaEntity.setEncerrarAutomaticamente(true);
+        campanhaEntity.setTagEntities(new HashSet<>());
+        campanhaEntity.setStatusMeta(false);
+        return campanhaEntity;
+    }
+
+    public static CampanhaEntity getCampanhaEntityNaoEncerraAutomatico() {
+        CampanhaEntity campanhaEntity = new CampanhaEntity();
+        campanhaEntity.setIdCampanha(1);
+        campanhaEntity.setFotoCampanha("foto_capa.jpeg");
+        campanhaEntity.setArrecadacao(new BigDecimal(200.00));
+        campanhaEntity.setTitulo("Livros usados");
+        campanhaEntity.setDescricao("Doação de livros usados");
+        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
+        campanhaEntity.setMeta(new BigDecimal(2000.00));
+        campanhaEntity.setUsuario(getUsuarioEntity());
+        campanhaEntity.setDoadores(new HashSet<>());
+        campanhaEntity.setIdUsuario(1);
+        campanhaEntity.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
+        campanhaEntity.setEncerrarAutomaticamente(false);
+        campanhaEntity.setTagEntities(new HashSet<>());
+        campanhaEntity.setStatusMeta(false);
+        return campanhaEntity;
+    }
+
+    public static CampanhaEntity getCampanhaEntityStatusEncerrada() {
+        CampanhaEntity campanhaEntity = new CampanhaEntity();
+        campanhaEntity.setIdCampanha(1);
+        campanhaEntity.setFotoCampanha("foto_capa.jpeg");
+        campanhaEntity.setArrecadacao(new BigDecimal(200.00));
+        campanhaEntity.setTitulo("Livros usados");
+        campanhaEntity.setDescricao("Doação de livros usados");
+        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
+        campanhaEntity.setMeta(new BigDecimal(2000.00));
+        campanhaEntity.setUsuario(getUsuarioEntity());
+        campanhaEntity.setDoadores(new HashSet<>());
+        campanhaEntity.setIdUsuario(1);
+        campanhaEntity.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
+        campanhaEntity.setEncerrarAutomaticamente(true);
+        campanhaEntity.setTagEntities(new HashSet<>());
+        campanhaEntity.setStatusMeta(true);
         return campanhaEntity;
     }
 }
