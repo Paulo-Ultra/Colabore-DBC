@@ -47,7 +47,7 @@ public class CampanhaService {
         }
 
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
-        campanhaEntity.setStatusMeta(true);
+        campanhaEntity.setStatusMeta(false);
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
@@ -130,13 +130,6 @@ public class CampanhaService {
         return objectMapper.convertValue(campanhaCreateDTO, CampanhaEntity.class);
     }
 
-    private static void extracted(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO, CampanhaEntity campanhaEntity) {
-        campanhaEntity.setMeta(campanhaCreateComFotoDTO.getMeta());
-        campanhaEntity.setDescricao(campanhaCreateComFotoDTO.getDescricao());
-        campanhaEntity.setTitulo(campanhaCreateComFotoDTO.getTitulo());
-        campanhaEntity.setEncerrarAutomaticamente(campanhaCreateComFotoDTO.getStatusMeta());
-        campanhaEntity.setStatusMeta(campanhaCreateComFotoDTO.getStatusMeta());
-    }
 
     private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaNaoEncontradaException {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));

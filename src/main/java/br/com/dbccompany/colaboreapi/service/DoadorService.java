@@ -47,15 +47,15 @@ public class DoadorService {
 
         doadorRepository.save(doadorEntity);
 
-        if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
+        if (campanhaEntity.getEncerrarAutomaticamente().equals(false)) {
             if (campanhaEntity.getMeta().doubleValue() < doadorCreateDTO.getValor().doubleValue()) {
                 campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
                 if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {
-                    campanhaEntity.setStatusMeta(false);
+                    campanhaEntity.setStatusMeta(true);
                 }
             } else {
                 campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
-                campanhaEntity.setStatusMeta(false);
+                campanhaEntity.setStatusMeta(true);
             }
             campanhaRepository.save(campanhaEntity);
         } else {
