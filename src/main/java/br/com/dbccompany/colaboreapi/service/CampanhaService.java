@@ -13,10 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,46 +33,47 @@ public class CampanhaService {
 
     private final S3Service s3Service;
 
-    public CampanhaDTO adicionar(CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public CampanhaDTO adicionar(CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
 
         UsuarioEntity usuarioRecuperado = usuarioService.getLoggedUser();
 
-        CampanhaEntity campanhaEntity = new CampanhaEntity();
-
-        extracted(campanhaCreateComFotoDTO, campanhaEntity);
-
-        URI uri = s3Service.uploadFile(campanhaCreateComFotoDTO.getFotoCampanha());
-        campanhaEntity.setFotoCampanha(uri.toString());
+        CampanhaEntity campanhaEntity = objectMapper.convertValue(campanhaCreateDTO, CampanhaEntity.class);
 
         campanhaEntity.setUsuario(usuarioRecuperado);
         campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
-        if (campanhaCreateComFotoDTO.getArrecadacao() == null) {
+        if (campanhaCreateDTO.getArrecadacao() == null) {
             campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
         }
 
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         campanhaEntity.setStatusMeta(true);
 
-        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
 
+    public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
+        CampanhaEntity campanhaEntity = localizarCampanha(idCampanha);
+        URI uri = s3Service.uploadFile(multipartFile);
+        campanhaEntity.setFotoCampanha(uri.toString());
+        campanhaRepository.save(campanhaEntity);
+    }
+
     public CampanhaDTO editar(Integer id,
-                              CampanhaCreateComFotoDTO campanhaCreateComFotoDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException, AmazonS3Exception {
+                              CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
+        if (campanhaRecuperada.getArrecadacao().doubleValue() > 0) {
+            throw new RegraDeNegocioException("Não é possível alterar campanhas que receberam doações");
+        }
+
         UsuarioEntity usuarioCampanha = usuarioService.getLoggedUser();
 
-        extracted(campanhaCreateComFotoDTO, campanhaRecuperada);
+        validaAlteracoes(campanhaCreateDTO, campanhaRecuperada);
 
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
-
-        URI uri = s3Service.uploadFile(campanhaCreateComFotoDTO.getFotoCampanha());
-        campanhaRecuperada.setFotoCampanha(uri.toString());
 
         verificaCriadorDaCampanha(id);
 
@@ -80,7 +83,7 @@ public class CampanhaService {
     public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaNaoEncontradaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
         CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-            return campanhaDTO;
+        return campanhaDTO;
     }
 
     public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
@@ -144,5 +147,11 @@ public class CampanhaService {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
+    }
+
+    private static void validaAlteracoes(CampanhaCreateDTO campanhaCreateDTO, CampanhaEntity campanhaEntity) {
+        campanhaEntity.setMeta(campanhaCreateDTO.getMeta());
+        campanhaEntity.setDescricao(campanhaCreateDTO.getDescricao());
+        campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
     }
 }
