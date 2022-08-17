@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,22 +40,22 @@ public class DoadorService {
         doadorEntity.setIdUsuario(usuarioEntity.getIdUsuario());
         doadorEntity.setValor(doadorCreateDTO.getValor());
 
-        List<CampanhaEntity> campanhas = new ArrayList<>();
+        Set<CampanhaEntity> campanhas = new HashSet<>();
         campanhas.add(campanhaEntity);
 
-        doadorEntity.setCampanha(campanhas);
+        doadorEntity.setCampanhas(campanhas);
 
         doadorRepository.save(doadorEntity);
 
-        if (campanhaEntity.getStatusMeta().equals(true)) {
+        if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
             if (campanhaEntity.getMeta().doubleValue() < doadorCreateDTO.getValor().doubleValue()) {
                 campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
                 if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {
-                    campanhaEntity.setSituacao(false);
+                    campanhaEntity.setStatusMeta(false);
                 }
             } else {
                 campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
-                campanhaEntity.setSituacao(false);
+                campanhaEntity.setStatusMeta(false);
             }
             campanhaRepository.save(campanhaEntity);
         } else {

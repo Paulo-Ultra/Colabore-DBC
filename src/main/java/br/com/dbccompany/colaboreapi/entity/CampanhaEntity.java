@@ -37,11 +37,11 @@ public class CampanhaEntity {
     @Column(name = "foto_capa")
     private String fotoCampanha;
 
+    @Column(name = "encerrar_automaticamente")
+    private Boolean encerrarAutomaticamente;
+
     @Column(name = "status_meta")
     private Boolean statusMeta;
-
-    @Column(name = "situacao")
-    private Boolean situacao;
 
     @Column(name = "data_limite")
     private LocalDateTime dataLimite;

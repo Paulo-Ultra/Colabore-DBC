@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +50,7 @@ public class CampanhaService {
         }
 
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
-        campanhaEntity.setSituacao(true);
+        campanhaEntity.setStatusMeta(true);
 
         //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -98,7 +97,7 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> localizarCampanhasAbertas() {
-        return campanhaRepository.findAllBySituacao(true)
+        return campanhaRepository.findAllByStatusMeta(false)
                 .stream()
                 .map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
@@ -113,12 +112,13 @@ public class CampanhaService {
     }
 
     public List<CampanhaDTO> listarMetasCumpridas(){
-        return campanhaRepository.findAllByStatusMetaTrueOrFalse().stream()
+        return campanhaRepository.findAllByStatusMeta(true).stream()
                .map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
                     return campanhaDTO;
                 }).collect(Collectors.toList());
     }
+
      private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
@@ -131,8 +131,8 @@ public class CampanhaService {
         campanhaEntity.setMeta(campanhaCreateComFotoDTO.getMeta());
         campanhaEntity.setDescricao(campanhaCreateComFotoDTO.getDescricao());
         campanhaEntity.setTitulo(campanhaCreateComFotoDTO.getTitulo());
+        campanhaEntity.setEncerrarAutomaticamente(campanhaCreateComFotoDTO.getStatusMeta());
         campanhaEntity.setStatusMeta(campanhaCreateComFotoDTO.getStatusMeta());
-        campanhaEntity.setSituacao(campanhaCreateComFotoDTO.getSituacao());
     }
 
     private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaNaoEncontradaException {

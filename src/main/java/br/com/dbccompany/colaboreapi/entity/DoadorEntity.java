@@ -33,7 +33,7 @@ public class DoadorEntity {
             joinColumns = @JoinColumn(name = "id_doador"),
             inverseJoinColumns = @JoinColumn(name = "id_campanha")
     )
-    private List<CampanhaEntity> campanha;
+    private Set<CampanhaEntity> campanhas;
 
     /*@JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
