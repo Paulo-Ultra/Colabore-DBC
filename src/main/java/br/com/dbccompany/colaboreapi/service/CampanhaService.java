@@ -48,6 +48,7 @@ public class CampanhaService {
         }
 
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
+        campanhaEntity.setSituacao(true);
 
         return retornarDTO(campanhaRepository.save(campanhaEntity));
     }
