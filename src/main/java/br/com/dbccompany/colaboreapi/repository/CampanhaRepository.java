@@ -13,6 +13,6 @@ public interface CampanhaRepository extends JpaRepository<CampanhaEntity, Intege
    List<CampanhaEntity> findAllByIdUsuario(Integer idUsuario);
    List<CampanhaEntity> findAllByIdUsuarioAndIdCampanha(Integer idUsuario, Integer idCampanha);
    List<CampanhaEntity> findAllBySituacao(Boolean situacao);
-   List<CampanhaEntity> findAllByStatusMetaTrueOrFalse();
 
+   //List<CampanhaEntity> findAllByStatusMetaTrueOrFalse();
 }

@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,16 +81,12 @@ public class CampanhaService {
     public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaNaoEncontradaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
         CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-            return campanhaDTO;
+        return campanhaDTO;
     }
 
-    public List<CampanhaDTO> listaDeCampanhas() throws RegraDeNegocioException {
-        usuarioService.getLoggedUser();
-        return campanhaRepository.findAll().stream()
-                .map(campanhaEntity -> {
-                    CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
-                    return campanhaDTO;
-                }).toList();
+    public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
+        return campanhaRepository.findById(idCampanha)
+                .orElseThrow(() -> new RegraDeNegocioException("Campanha não localizada"));
     }
 
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() {
@@ -103,13 +97,30 @@ public class CampanhaService {
                 }).collect(Collectors.toList());
     }
 
+    public List<CampanhaDTO> localizarCampanhasAbertas() {
+        return campanhaRepository.findAllBySituacao(true)
+                .stream()
+                .map(campanhaEntity -> {
+                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                    return campanhaDTO;
+                }).toList();
+    }
+
     public void deletar(Integer id) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(id);
         verificaCriadorDaCampanha(id);
         campanhaRepository.delete(campanhaEntity);
     }
 
-     private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
+    /*public List<CampanhaDTO> listarMetasCumpridas(){
+        return campanhaRepository.findAllByStatusMetaTrueOrFalse().stream()
+                .map(campanhaEntity -> {
+                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                    return campanhaDTO;
+                }).collect(Collectors.toList());
+    }*/
+
+    private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
@@ -121,25 +132,16 @@ public class CampanhaService {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));
     }
 
-    private static void validaAlteracoes(CampanhaCreateDTO campanhaCreateDTO, CampanhaEntity campanhaEntity) {
-        campanhaEntity.setMeta(campanhaCreateDTO.getMeta());
-        campanhaEntity.setDescricao(campanhaCreateDTO.getDescricao());
-        campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
-    }
-
-    private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+    private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException {
         campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdLoggedUser(), idCampanha)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
     }
 
-    //Todo ajustar query
-    public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
-        CampanhaEntity campanhaRecuperada = campanhaRepository.findAll().stream()
-                .filter(campanha -> campanha.getIdCampanha().equals(idCampanha))
-                .findFirst()
-                .orElseThrow(() -> new RegraDeNegocioException("Campanha não encontrada"));
-        return campanhaRecuperada;
+    private static void validaAlteracoes(CampanhaCreateDTO campanhaCreateDTO, CampanhaEntity campanhaEntity) {
+        campanhaEntity.setMeta(campanhaCreateDTO.getMeta());
+        campanhaEntity.setDescricao(campanhaCreateDTO.getDescricao());
+        campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
     }
 }
