@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.doador.DoadorCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
+import br.com.dbccompany.colaboreapi.exceptions.DoacaoException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.DoadorService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class DoadorController {
 
     @PostMapping("/{idCampanha}")
     public ResponseEntity<DoadorDTO> adicionar(@PathVariable("idCampanha") Integer id,
-                                               @Valid @RequestBody DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException {
+                                               @Valid @RequestBody DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException, DoacaoException {
         return ResponseEntity.ok(doadorService.adicionar(id, doadorCreateDTO));
     }
 }

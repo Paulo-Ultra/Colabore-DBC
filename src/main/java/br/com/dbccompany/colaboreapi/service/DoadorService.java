@@ -5,6 +5,7 @@ import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.DoacaoException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.DoadorRepository;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ public class DoadorService {
 
     private final ObjectMapper objectMapper;
 
-    public DoadorDTO adicionar(Integer idCampanha, DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException {
+    public DoadorDTO adicionar(Integer idCampanha, DoadorCreateDTO doadorCreateDTO) throws DoacaoException, RegraDeNegocioException {
 
         UsuarioEntity usuarioEntity = usuarioService.getLoggedUser();
         CampanhaEntity campanhaEntity = campanhaService.localizarCampanha(idCampanha);
@@ -43,11 +45,13 @@ public class DoadorService {
 
         doadorEntity.setCampanhas(campanhas);
 
-        //todo validar finalizar pela data limite
-        //todo o usuario não pode doar para campanha que ele criou
-        if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
+        if(usuarioService.getIdLoggedUser().equals(campanhaEntity.getIdUsuario())){
+            throw new DoacaoException("Você não pode doar para campanhas que criou");
+        } else if(LocalDateTime.now().isAfter(campanhaEntity.getDataLimite())){
+            throw new DoacaoException("Campanha encerrada, esta campanha não aceita mais doações");
+        } else if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
             if (campanhaEntity.getStatusMeta()) {
-                throw new RegraDeNegocioException("Esta campanha não aceita mais doações!");
+                throw new DoacaoException("Esta campanha não aceita mais doações!");
             }
         }
         compararMetaComDoacao(doadorCreateDTO, campanhaEntity);
@@ -66,6 +70,10 @@ public class DoadorService {
                 campanhaEntity.setStatusMeta(true);
             }
         }
+    }
+
+    public void verificarUsuarioComCampanha (){
+        campanhaService.listaDeCampanhasByUsuarioLogado();
     }
 
     public DoadorDTO retornarDoadorDTO (DoadorEntity doadorEntity) {

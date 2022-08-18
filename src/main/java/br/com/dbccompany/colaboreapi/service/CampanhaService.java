@@ -9,7 +9,7 @@ import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.enums.TipoFiltro;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
-import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
+import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
@@ -44,7 +44,7 @@ public class CampanhaService {
 
     private final S3Service s3Service;
 
-    public CampanhaDTO adicionar(CampanhaDTO campanhaDTO) throws RegraDeNegocioException {
+    public CampanhaDTO adicionar(CampanhaDTO campanhaDTO) throws RegraDeNegocioException, CampanhaException {
 
         if (campanhaDTO.getMeta().doubleValue() <= 0) {
             throw new RegraDeNegocioException("A meta da campanha deve ser maior do que 0!");
@@ -71,10 +71,13 @@ public class CampanhaService {
         campanhaEntity.setUsuario(usuarioEntity);
         campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());
         campanhaEntity.setTagEntities(tagEntitySet);
-        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         campanhaEntity.setStatusMeta(false);
+        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
+        if(campanhaEntity.getDataLimite().isBefore(LocalDateTime.now()) || campanhaEntity.getDataLimite().isEqual(LocalDateTime.now())){
+            throw new CampanhaException("A campanha deve ser criada com uma data posterior a de hoje");
+        }
 
-        campanhaDTO = retornarDTO(campanhaRepository.save(campanhaEntity));
+            campanhaDTO = retornarDTO(campanhaRepository.save(campanhaEntity));
         campanhaDTO.setTags(objectMapper.convertValue(campanhaEntity.getTagEntities(), Set.class));
 
         return campanhaDTO;
@@ -88,7 +91,7 @@ public class CampanhaService {
     }
 
     public CampanhaDTO editar(Integer id,
-                              CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+                              CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaException {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
@@ -108,7 +111,7 @@ public class CampanhaService {
         return retornarDTO(campanhaRepository.save(campanhaRecuperada));
     }
 
-    public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaNaoEncontradaException {
+    public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
         CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
         return campanhaDTO;
@@ -128,7 +131,7 @@ public class CampanhaService {
     }
 
 
-    public void deletar(Integer id) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
+    public void deletar(Integer id) throws CampanhaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(id);
         verificaCriadorDaCampanha(id);
         campanhaRepository.delete(campanhaEntity);
@@ -172,15 +175,15 @@ public class CampanhaService {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
-    private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaNaoEncontradaException {
-        return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada."));
+    private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaException {
+        return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaException("Campanha não encontrada."));
     }
 
-    private void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaNaoEncontradaException {
+    public void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaException {
         campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdLoggedUser(), idCampanha)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new CampanhaNaoEncontradaException("Campanha não encontrada"));
+                .orElseThrow(() -> new CampanhaException("Campanha não encontrada"));
     }
 
     private static void validaAlteracoes(CampanhaCreateDTO campanhaCreateDTO, CampanhaEntity campanhaEntity) {

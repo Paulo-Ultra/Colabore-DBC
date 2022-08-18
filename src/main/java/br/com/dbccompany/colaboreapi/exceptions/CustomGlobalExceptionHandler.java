@@ -61,8 +61,8 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(CampanhaNaoEncontradaException.class)
-    public ResponseEntity<Object> handleException(CampanhaNaoEncontradaException exception) {
+    @ExceptionHandler(CampanhaException.class)
+    public ResponseEntity<Object> handleException(CampanhaException exception) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
         body.put("status", HttpStatus.NOT_FOUND.value());
@@ -90,6 +90,16 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(AmazonS3Exception.class)
     public ResponseEntity<Object> handleException(AmazonS3Exception exception){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", HttpStatus.BAD_REQUEST.value());
+        body.put("message", exception.getMessage());
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DoacaoException.class)
+    public ResponseEntity<Object> handleException(DoacaoException exception,
+                                                  HttpServletRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
         body.put("status", HttpStatus.BAD_REQUEST.value());
