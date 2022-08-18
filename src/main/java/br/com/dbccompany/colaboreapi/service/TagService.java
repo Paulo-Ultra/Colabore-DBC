@@ -44,7 +44,7 @@ public class TagService {
 
     public TagEntity findById(Integer id) throws RegraDeNegocioException {
         TagEntity tagEntity = tagRepository.findById(id)
-                .orElseThrow(() -> new RegraDeNegocioException("Categoria não localizada!"));
+                .orElseThrow(() -> new RegraDeNegocioException("Tag não localizada!"));
         return tagEntity;
     }
 

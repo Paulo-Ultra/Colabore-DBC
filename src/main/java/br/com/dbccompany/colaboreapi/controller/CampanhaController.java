@@ -31,7 +31,7 @@ public class CampanhaController {
     private final CampanhaService campanhaService;
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @RequestBody CampanhaDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
         return new ResponseEntity<>(campanhaService.adicionar(campanhaCreateDTO), HttpStatus.CREATED);
     }
 
