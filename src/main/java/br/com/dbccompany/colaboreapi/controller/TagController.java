@@ -36,13 +36,6 @@ public class TagController {
         return tagDTOS;
     }
 
-    @Operation(summary = "Lista todas as tags da campanha.", description = "Lista todas as tags vinculadas à uma campanha, através do id da campanha.")
-    @GetMapping("/{idCampanha}")
-    public List<TagDTO> listTagCampanha(@PathVariable("idCampanha") Integer idCampanha) {
-        List<TagDTO> tagDTOS = tagService.listTagCampanha(idCampanha);
-        return tagDTOS;
-    }
-
     @Operation(summary = "Deleta uma tag.", description = "Deleta uma tag do banco de dados através de seu id")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Integer id) throws RegraDeNegocioException {

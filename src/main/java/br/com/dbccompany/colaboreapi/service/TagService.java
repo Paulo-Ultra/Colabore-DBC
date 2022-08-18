@@ -56,10 +56,4 @@ public class TagService {
         TagEntity tagEntity = findById(id);
         tagRepository.delete(tagEntity);
     }
-
-    public List<TagDTO> listTagCampanha(Integer idCampanha) {
-        return tagRepository.listTagCampanha(idCampanha).stream()
-                .map(tag -> objectMapper.convertValue(tag, TagDTO.class))
-                .collect(Collectors.toList());
-    }
 }
