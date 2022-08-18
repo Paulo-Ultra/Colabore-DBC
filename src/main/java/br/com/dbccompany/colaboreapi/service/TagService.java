@@ -2,57 +2,60 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.tag.TagCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
-import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
+
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
-import br.com.dbccompany.colaboreapi.repository.DoadorRepository;
 import br.com.dbccompany.colaboreapi.repository.TagRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TagService {
 
-    private final DoadorRepository doadorRepository;
-
-    private final UsuarioService usuarioService;
-
-    private final CampanhaService campanhaService;
-
     private final TagRepository tagRepository;
 
     private final ObjectMapper objectMapper;
 
-    public TagDTO adicionar(Integer idCampanha, TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
+    public TagDTO adicionar(TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
 
-        try{
-            String nomeTag = tagCreateDTO.getNomeTag().toLowerCase();
+        Integer verificaExistenciaTag = tagRepository.findByNomeTag(tagCreateDTO.getNomeTag());
 
-            CampanhaEntity campanhaEntity = campanhaService.localizarCampanha(idCampanha);
-            TagEntity tagEntity = new TagEntity();
-
-            tagEntity.setNomeTag(nomeTag);
-
-            Set<CampanhaEntity> campanhas = Set.of(campanhaEntity);
-
-
-            tagEntity.setCampanhaEntities(campanhas);
-            tagEntity.setIdCampanha(idCampanha);
-
-            tagRepository.save(tagEntity);
-
-            return retornarDoadorDTO(tagEntity);
-        } catch (RegraDeNegocioException ex){
+        if(verificaExistenciaTag > 0 ){
             throw new RegraDeNegocioException("Esta tag já existe!");
         }
+
+        TagEntity tagEntity = objectMapper.convertValue(tagCreateDTO, TagEntity.class);
+        TagEntity novaTag = tagRepository.save(tagEntity);
+        TagDTO tagDTO = objectMapper.convertValue(novaTag, TagDTO.class);
+
+        return tagDTO;
     }
 
-    public TagDTO retornarDoadorDTO (TagEntity tagEntity) {
-        return objectMapper.convertValue(tagEntity, TagDTO.class);
+    public List<TagDTO> list() {
+        return tagRepository.findAll().stream()
+                .map(tag -> objectMapper.convertValue(tag, TagDTO.class))
+                .collect(Collectors.toList());
     }
 
+    public TagEntity findById(Integer id) throws RegraDeNegocioException {
+        TagEntity tagEntity = tagRepository.findById(id)
+                .orElseThrow(() -> new RegraDeNegocioException("Categoria não localizada!"));
+        return tagEntity;
+    }
+
+    public void delete(Integer id) throws RegraDeNegocioException {
+        TagEntity tagEntity = findById(id);
+        tagRepository.delete(tagEntity);
+    }
+
+    public List<TagDTO> listTagCampanha(Integer idCampanha) {
+        return tagRepository.listTagCampanha(idCampanha).stream()
+                .map(tag -> objectMapper.convertValue(tag, TagDTO.class))
+                .collect(Collectors.toList());
+    }
 }

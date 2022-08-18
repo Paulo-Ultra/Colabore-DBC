@@ -12,9 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -47,23 +45,30 @@ public class DoadorService {
 
         doadorRepository.save(doadorEntity);
 
-        if (campanhaEntity.getEncerrarAutomaticamente().equals(true) && campanhaEntity.getStatusMeta().equals(false)) {
-            if (campanhaEntity.getMeta().doubleValue() < doadorCreateDTO.getValor().doubleValue()) {
-                campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
-                if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {
-                    campanhaEntity.setStatusMeta(true);
-                }
+        if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
+            if (campanhaEntity.getStatusMeta()) {
+                throw new RegraDeNegocioException("Está campanha não aceita mais doações!");
             } else {
-                campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
-                campanhaEntity.setStatusMeta(true);
+                comparaMetaComDoacao(doadorCreateDTO, campanhaEntity);
+                campanhaRepository.save(campanhaEntity);
             }
-            campanhaRepository.save(campanhaEntity);
         } else {
-            campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+            comparaMetaComDoacao(doadorCreateDTO, campanhaEntity);
             campanhaRepository.save(campanhaEntity);
         }
-
         return retornarDoadorDTO(doadorEntity);
+    }
+
+    private static void comparaMetaComDoacao(DoadorCreateDTO doadorCreateDTO, CampanhaEntity campanhaEntity) {
+        if (campanhaEntity.getMeta().doubleValue() <= doadorCreateDTO.getValor().doubleValue()) {
+            campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+            campanhaEntity.setStatusMeta(true);
+        } else {
+            campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
+            if (campanhaEntity.getArrecadacao().doubleValue() >= campanhaEntity.getMeta().doubleValue()) {
+                campanhaEntity.setStatusMeta(true);
+            }
+        }
     }
 
     public DoadorDTO retornarDoadorDTO (DoadorEntity doadorEntity) {

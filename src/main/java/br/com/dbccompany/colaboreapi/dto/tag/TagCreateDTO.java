@@ -6,8 +6,8 @@ import lombok.Data;
 @Data
 public class TagCreateDTO {
 
-    @Schema(hidden = true)
-    private Integer idCampanha;
+    /*@Schema(hidden = true)
+    private Integer idCampanha;*/
 
     private String nomeTag;
 }
