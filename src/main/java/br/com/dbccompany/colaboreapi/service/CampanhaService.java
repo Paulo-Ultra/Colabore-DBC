@@ -147,14 +147,13 @@ public class CampanhaService {
 
     private List<CampanhaDTO> getCampanhaComDoacoesTagsDTOS(List<CampanhaEntity> campanhaRepository) {
         return campanhaRepository.stream()
-                .map(campanhaEntity -> {
-                    return getCampanhaByIdDTO(campanhaEntity);
-                }).collect(Collectors.toList());
+                .map(campanhaEntity -> getCampanhaByIdDTO(campanhaEntity)).collect(Collectors.toList());
     }
 
     private CampanhaDTO getCampanhaByIdDTO(CampanhaEntity campanhaEntity) {
         CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
         campanhaDTO.getStatusMeta();
+        campanhaDTO.setNome(campanhaEntity.getUsuario().getNome());
         campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
                 .map(doadorEntity -> {
                     DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
@@ -168,6 +167,7 @@ public class CampanhaService {
                 .map(tagEntity -> objectMapper.convertValue(tagEntity, TagDTO.class))
                 .collect(Collectors.toSet()));
         return campanhaDTO;
+
     }
 
     private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {

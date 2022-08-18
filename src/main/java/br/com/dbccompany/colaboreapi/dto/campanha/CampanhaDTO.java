@@ -14,6 +14,9 @@ public class CampanhaDTO extends CampanhaCreateDTO {
     @Schema(description = "Identificador do usuário", hidden = true)
     private Integer idCampanha;
 
+    @Schema(description = "Nome do usuário")
+    private String nome;
+
     @Schema(hidden = true)
     private List<DoadorCampanhaDTO> doacoes;
 
