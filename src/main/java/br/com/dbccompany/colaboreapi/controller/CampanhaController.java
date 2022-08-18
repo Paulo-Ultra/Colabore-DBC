@@ -74,7 +74,7 @@ public class CampanhaController {
     @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
             description = "lista as informações da campanha pelo status da meta como conclúídas no banco de dados")
     @GetMapping("/listarCampanhas")
-    public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas) throws RegraDeNegocioException, CampanhaException {
-        return new ResponseEntity<>(campanhaService.listarCampanha(tipoFiltro, minhasContribuicoes, minhasCampanhas), HttpStatus.OK);
+    public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas, @RequestParam List<Integer> idTags) throws RegraDeNegocioException, CampanhaException {
+        return new ResponseEntity<>(campanhaService.listarCampanha(tipoFiltro, minhasContribuicoes, minhasCampanhas, idTags), HttpStatus.OK);
     }
 }

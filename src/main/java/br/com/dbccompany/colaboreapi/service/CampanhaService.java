@@ -132,16 +132,16 @@ public class CampanhaService {
         campanhaRepository.delete(campanhaEntity);
     }
 
-    public List<CampanhaDTO> listarCampanha (TipoFiltro tipoFiltro, boolean minhasContribuicoes, boolean minhasCampanhas) {
+    public List<CampanhaDTO> listarCampanha (TipoFiltro tipoFiltro, boolean minhasContribuicoes, boolean minhasCampanhas, List<Integer> idTags) {
 
         Integer idUsuario = usuarioService.getIdLoggedUser();
 
         if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
-            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(false, idUsuario, minhasContribuicoes, minhasCampanhas));
+            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(false, idUsuario, idTags,minhasContribuicoes, minhasCampanhas));
         } else if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
-            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(true, idUsuario, minhasContribuicoes, minhasCampanhas));
+            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(true, idUsuario, idTags,minhasContribuicoes, minhasCampanhas));
         } else {
-            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(null, idUsuario, minhasContribuicoes, minhasCampanhas));
+            return getCampanhaComDoacoesTagsDTOS(campanhaRepository.findAll(null, idUsuario, idTags,minhasContribuicoes, minhasCampanhas));
         }
     }
 
