@@ -30,7 +30,9 @@ public class TagService {
         if(verificaExistenciaTag > 0 ){
             throw new RegraDeNegocioException("Esta tag já existe!");
         }
-
+        if(tagCreateDTO.getNomeTag().isBlank() || tagCreateDTO.getNomeTag().isEmpty() ){
+            throw new RegraDeNegocioException("Nome da tag não pode ser nula ou vazia");
+        }
         TagEntity tagEntity = objectMapper.convertValue(tagCreateDTO, TagEntity.class);
         TagEntity novaTag = tagRepository.save(tagEntity);
         TagDTO tagDTO = objectMapper.convertValue(novaTag, TagDTO.class);
