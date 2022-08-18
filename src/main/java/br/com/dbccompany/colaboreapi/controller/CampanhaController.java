@@ -77,5 +77,4 @@ public class CampanhaController {
     public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.listarCampanha(tipoFiltro, minhasContribuicoes, minhasCampanhas), HttpStatus.OK);
     }
-
 }
