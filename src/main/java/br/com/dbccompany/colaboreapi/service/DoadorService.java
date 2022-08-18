@@ -35,7 +35,7 @@ public class DoadorService {
         CampanhaEntity campanhaEntity = campanhaService.localizarCampanha(idCampanha);
         DoadorEntity doadorEntity = new DoadorEntity();
 
-        doadorEntity.setIdUsuario(usuarioEntity.getIdUsuario());
+        doadorEntity.setUsuario(usuarioEntity);
         doadorEntity.setValor(doadorCreateDTO.getValor());
 
         Set<CampanhaEntity> campanhas = new HashSet<>();
@@ -43,23 +43,20 @@ public class DoadorService {
 
         doadorEntity.setCampanhas(campanhas);
 
-        doadorRepository.save(doadorEntity);
-
+        //todo validar finalizar pela data limite
+        //todo o usuario não pode doar para campanha que ele criou
         if (campanhaEntity.getEncerrarAutomaticamente().equals(true)) {
             if (campanhaEntity.getStatusMeta()) {
-                throw new RegraDeNegocioException("Está campanha não aceita mais doações!");
-            } else {
-                comparaMetaComDoacao(doadorCreateDTO, campanhaEntity);
-                campanhaRepository.save(campanhaEntity);
+                throw new RegraDeNegocioException("Esta campanha não aceita mais doações!");
             }
-        } else {
-            comparaMetaComDoacao(doadorCreateDTO, campanhaEntity);
-            campanhaRepository.save(campanhaEntity);
         }
+        compararMetaComDoacao(doadorCreateDTO, campanhaEntity);
+        campanhaRepository.save(campanhaEntity);
+        doadorRepository.save(doadorEntity);
         return retornarDoadorDTO(doadorEntity);
     }
 
-    private static void comparaMetaComDoacao(DoadorCreateDTO doadorCreateDTO, CampanhaEntity campanhaEntity) {
+    private static void compararMetaComDoacao(DoadorCreateDTO doadorCreateDTO, CampanhaEntity campanhaEntity) {
         if (campanhaEntity.getMeta().doubleValue() <= doadorCreateDTO.getValor().doubleValue()) {
             campanhaEntity.setArrecadacao(campanhaEntity.getArrecadacao().add(doadorCreateDTO.getValor()));
             campanhaEntity.setStatusMeta(true);

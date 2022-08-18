@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.campanha.DoadorCampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
@@ -100,14 +101,6 @@ public class CampanhaService {
                 }).collect(Collectors.toList());
     }
 
-    public List<CampanhaDTO> localizarCampanhasAbertas() {
-        return campanhaRepository.findAllByStatusMeta(false)
-                .stream()
-                .map(campanhaEntity -> {
-                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-                    return campanhaDTO;
-                }).toList();
-    }
 
     public void deletar(Integer id) throws CampanhaNaoEncontradaException, RegraDeNegocioException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(id);
@@ -115,65 +108,39 @@ public class CampanhaService {
         campanhaRepository.delete(campanhaEntity);
     }
 
-    public List<CampanhaDTO> listarMetasCumpridas(){
-        return campanhaRepository.findAllByStatusMeta(true).stream()
-               .map(campanhaEntity -> {
+
+    public List<CampanhaDTO> listarCampanha (TipoFiltro tipoFiltro, boolean minhasContribuicoes, boolean minhasCampanhas) {
+
+        Integer idUsuario = usuarioService.getIdLoggedUser();
+
+        if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
+            return getCampanhaComDoacoesDTOS(campanhaRepository.findAll(false, idUsuario, minhasContribuicoes, minhasCampanhas));
+        } else if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
+            return getCampanhaComDoacoesDTOS(campanhaRepository.findAll(true, idUsuario, minhasContribuicoes, minhasCampanhas));
+        } else {
+            return getCampanhaComDoacoesDTOS(campanhaRepository.findAll(null, idUsuario, minhasContribuicoes, minhasCampanhas));
+        }
+    }
+
+    private List<CampanhaDTO> getCampanhaComDoacoesDTOS(List<CampanhaEntity> campanhaRepository) {
+        return campanhaRepository.stream()
+                .map(campanhaEntity -> {
                     CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                    campanhaDTO.getStatusMeta();
+                    campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                            .map(doadorEntity -> {
+                                DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
+                                UsuarioEntity usuarioEntity = doadorEntity.getUsuario();
+                                doadorCampanhaDTO.setNome(usuarioEntity.getNome());
+                                doadorCampanhaDTO.setFoto(usuarioEntity.getFoto());
+                                return doadorCampanhaDTO;
+                            })
+                            .collect(Collectors.toList()));
                     return campanhaDTO;
                 }).collect(Collectors.toList());
     }
 
-    public List<CampanhaDTO> listarCampanha (TipoFiltro tipoFiltro, boolean minhasContribuicoes, boolean minhasCampanhas) {
-        Integer idUsuario = usuarioService.getIdLoggedUser();
-
-        if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
-            campanhaRepository.findAllByStatusMeta(false).stream()
-                    .map(campanhaEntity -> {
-                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-                        try {
-                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
-                        } catch (RegraDeNegocioException e) {
-                            throw new RuntimeException(e);
-                        }
-                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
-                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
-                                        .collect(Collectors.toList()));
-                        return campanhaDTO;
-                    }).collect(Collectors.toList());
-        } else if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
-            campanhaRepository.findAllByStatusMeta(true).stream()
-                    .map(campanhaEntity -> {
-                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-                        try {
-                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
-                        } catch (RegraDeNegocioException e) {
-                            throw new RuntimeException(e);
-                        }
-                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
-                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
-                                .collect(Collectors.toList()));
-                        return campanhaDTO;
-                    }).collect(Collectors.toList());
-        } else {
-            return campanhaRepository.findAll(idUsuario, minhasContribuicoes, minhasCampanhas).stream()
-                    .map(campanhaEntity -> {
-                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-                        try {
-                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
-                        } catch (RegraDeNegocioException e) {
-                            throw new RuntimeException(e);
-                        }
-                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
-                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
-                                .collect(Collectors.toList()));
-                        return campanhaDTO;
-                    }).collect(Collectors.toList());
-        }
-        return null;
-    }
-
-
-     private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
+    private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 

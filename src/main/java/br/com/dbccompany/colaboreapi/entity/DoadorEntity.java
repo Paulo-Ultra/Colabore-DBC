@@ -20,7 +20,7 @@ public class DoadorEntity {
     @Column(name = "id_doador")
     private Integer idDoador;
 
-    @Column(name = "id_usuario")
+    @Column(name = "id_usuario", insertable = false, updatable = false)
     private Integer idUsuario;
 
     @Column(name = "valor")
@@ -35,15 +35,8 @@ public class DoadorEntity {
     )
     private Set<CampanhaEntity> campanhas;
 
-    /*@JsonIgnore
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
-    private UsuarioEntity usuario;*/
-
-    /*@JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "campanha_x_doador",
-            joinColumns = @JoinColumn(name = "id_doador"),
-            inverseJoinColumns = @JoinColumn(name = "id_usuario"))
-    private List<UsuarioEntity> usuario;*/
+    private UsuarioEntity usuario;
 }

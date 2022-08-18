@@ -46,12 +46,6 @@ public class CampanhaController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "realiza a listagem de todas as campanhas abertas", description = "lista de todas as campanhas com status aberta no banco de dados")
-    @GetMapping("/listarCampanhasAbertas")
-    public ResponseEntity<List<CampanhaDTO>> listarCampanhas() {
-        return new ResponseEntity<>(campanhaService.localizarCampanhasAbertas(), HttpStatus.OK);
-    }
-
     @Operation(summary = "realiza a listagem de todas as campanhas do usuário logado", description = "lista de todas as campanhas do usuário logado no banco de dados")
     @GetMapping("/listarCampanhasDoUsuario")
     public ResponseEntity<List<CampanhaDTO>> listarCampanhasDoUsuario() {
@@ -75,13 +69,6 @@ public class CampanhaController {
     @GetMapping("/campanhaPeloId")
     public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaNaoEncontradaException {
         return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
-    }
-
-    @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
-            description = "lista as informações da campanha pelo status da meta como conclúídas no banco de dados")
-    @GetMapping("/campanhaMetaFinalizada")
-    public ResponseEntity<List<CampanhaDTO>> CampanhaPeloStatusMetaCumprida() {
-        return new ResponseEntity<>(campanhaService.listarMetasCumpridas(), HttpStatus.OK);
     }
 
     @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
