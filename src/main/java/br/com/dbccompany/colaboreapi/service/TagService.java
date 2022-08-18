@@ -23,6 +23,8 @@ public class TagService {
 
     public TagDTO adicionar(TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
 
+        tagCreateDTO.setNomeTag(tagCreateDTO.getNomeTag().toLowerCase());
+
         Integer verificaExistenciaTag = tagRepository.findByNomeTag(tagCreateDTO.getNomeTag());
 
         if(verificaExistenciaTag > 0 ){
