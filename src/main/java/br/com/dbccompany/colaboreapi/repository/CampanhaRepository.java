@@ -19,7 +19,7 @@ public interface CampanhaRepository extends JpaRepository<CampanhaEntity, Intege
               " left join c.doadores d " +
               " left join c.tagEntities t " +
               " where (:minhasContribuicoes = false OR d.idUsuario = :idUsuario )  " +
-              "   and (t.idTag in :idTag) " +
+              "   and (:idTag is null OR t.idTag in :idTag) " +
               "   and (:minhasCampanhas = false OR c.idUsuario = :idUsuario) " +
               " and (:statusMeta is null OR c.statusMeta = :statusMeta )" )
       List<CampanhaEntity> findAll(@Param("statusMeta") Boolean statusMeta,
@@ -27,4 +27,7 @@ public interface CampanhaRepository extends JpaRepository<CampanhaEntity, Intege
                                    @Param("idTag")List<Integer> idTag,
                                    @Param("minhasContribuicoes") Boolean minhasContribuicoes,
                                    @Param("minhasCampanhas") Boolean minhasCampanhas);
+
+
+
 }
