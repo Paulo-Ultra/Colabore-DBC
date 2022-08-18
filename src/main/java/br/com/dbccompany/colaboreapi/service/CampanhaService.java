@@ -24,6 +24,7 @@ import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -83,8 +84,8 @@ public class CampanhaService {
         return campanhaDTO;
     }
 
-    public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
-        CampanhaEntity campanhaEntity = localizarCampanha(idCampanha);
+    public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException {
+        CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
         URI uri = s3Service.uploadFile(multipartFile);
         campanhaEntity.setFotoCampanha(uri.toString());
         campanhaRepository.save(campanhaEntity);
@@ -111,15 +112,9 @@ public class CampanhaService {
         return retornarDTO(campanhaRepository.save(campanhaRecuperada));
     }
 
-    public CampanhaDTO campanhaPeloId(Integer idCampanha) throws CampanhaException {
+    public CampanhaDTO localizarCampanha(Integer idCampanha) throws CampanhaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
-        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-        return campanhaDTO;
-    }
-
-    public CampanhaEntity localizarCampanha(Integer idCampanha) throws RegraDeNegocioException {
-        return campanhaRepository.findById(idCampanha)
-                .orElseThrow(() -> new RegraDeNegocioException("Campanha não localizada"));
+        return getCampanhaByIdDTO(campanhaEntity);
     }
 
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() {
@@ -153,29 +148,33 @@ public class CampanhaService {
     private List<CampanhaDTO> getCampanhaComDoacoesTagsDTOS(List<CampanhaEntity> campanhaRepository) {
         return campanhaRepository.stream()
                 .map(campanhaEntity -> {
-                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
-                    campanhaDTO.getStatusMeta();
-                    campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
-                            .map(doadorEntity -> {
-                                DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
-                                UsuarioEntity usuarioEntity = doadorEntity.getUsuario();
-                                doadorCampanhaDTO.setNome(usuarioEntity.getNome());
-                                doadorCampanhaDTO.setFoto(usuarioEntity.getFoto());
-                                return doadorCampanhaDTO;
-                            })
-                            .collect(Collectors.toList()));
-                    campanhaDTO.setTags(campanhaEntity.getTagEntities().stream()
-                            .map(tagEntity -> objectMapper.convertValue(tagEntity, TagDTO.class))
-                            .collect(Collectors.toSet()));
-                    return campanhaDTO;
+                    return getCampanhaByIdDTO(campanhaEntity);
                 }).collect(Collectors.toList());
+    }
+
+    private CampanhaDTO getCampanhaByIdDTO(CampanhaEntity campanhaEntity) {
+        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+        campanhaDTO.getStatusMeta();
+        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                .map(doadorEntity -> {
+                    DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
+                    UsuarioEntity usuarioEntity = doadorEntity.getUsuario();
+                    doadorCampanhaDTO.setNome(usuarioEntity.getNome());
+                    doadorCampanhaDTO.setFoto(usuarioEntity.getFoto());
+                    return doadorCampanhaDTO;
+                })
+                .collect(Collectors.toList()));
+        campanhaDTO.setTags(campanhaEntity.getTagEntities().stream()
+                .map(tagEntity -> objectMapper.convertValue(tagEntity, TagDTO.class))
+                .collect(Collectors.toSet()));
+        return campanhaDTO;
     }
 
     private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
-    private CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaException {
+    public CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaException {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaException("Campanha não encontrada."));
     }
 

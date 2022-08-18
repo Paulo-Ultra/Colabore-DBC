@@ -17,5 +17,6 @@ public class CampanhaDTO extends CampanhaCreateDTO {
     @Schema(hidden = true)
     private List<DoadorCampanhaDTO> doacoes;
 
+//    @Schema(hidden = true)
     private Set<TagDTO> tags;
 }

@@ -1,5 +1,6 @@
 package br.com.dbccompany.colaboreapi.dto.campanha;
 
+import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import io.swagger.v3.oas.annotations.media.Schema;

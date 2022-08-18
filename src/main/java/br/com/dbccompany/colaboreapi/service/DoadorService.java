@@ -5,6 +5,7 @@ import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.DoacaoException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
@@ -31,10 +32,10 @@ public class DoadorService {
 
     private final ObjectMapper objectMapper;
 
-    public DoadorDTO adicionar(Integer idCampanha, DoadorCreateDTO doadorCreateDTO) throws DoacaoException, RegraDeNegocioException {
+    public DoadorDTO adicionar(Integer idCampanha, DoadorCreateDTO doadorCreateDTO) throws DoacaoException, RegraDeNegocioException, CampanhaException {
 
         UsuarioEntity usuarioEntity = usuarioService.getLoggedUser();
-        CampanhaEntity campanhaEntity = campanhaService.localizarCampanha(idCampanha);
+        CampanhaEntity campanhaEntity = campanhaService.buscarIdCampanha(idCampanha);
         DoadorEntity doadorEntity = new DoadorEntity();
 
         doadorEntity.setUsuario(usuarioEntity);

@@ -41,7 +41,7 @@ public class CampanhaController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<Void> cadastrarFoto (@ModelAttribute MultipartFile multipartFile,
-                                               @RequestParam Integer idCampanha) throws RegraDeNegocioException, AmazonS3Exception {
+                                               @RequestParam Integer idCampanha) throws RegraDeNegocioException, AmazonS3Exception, CampanhaException {
         campanhaService.adicionarFoto(idCampanha, multipartFile);
         return ResponseEntity.ok().build();
     }
@@ -68,7 +68,7 @@ public class CampanhaController {
     @Operation(summary = "realiza a listagem da campanha pelo id informado", description = "lista as informações da campanha pelo id no banco de dados")
     @GetMapping("/campanhaPeloId")
     public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaException {
-        return new ResponseEntity<>(campanhaService.campanhaPeloId(idCampanha), HttpStatus.OK);
+        return new ResponseEntity<>(campanhaService.localizarCampanha(idCampanha), HttpStatus.OK);
     }
 
     @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
