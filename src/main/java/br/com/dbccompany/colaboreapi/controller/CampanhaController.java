@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.enums.TipoFiltro;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
@@ -81,6 +82,13 @@ public class CampanhaController {
     @GetMapping("/campanhaMetaFinalizada")
     public ResponseEntity<List<CampanhaDTO>> CampanhaPeloStatusMetaCumprida() {
         return new ResponseEntity<>(campanhaService.listarMetasCumpridas(), HttpStatus.OK);
+    }
+
+    @Operation(summary = "realiza a listagem das campanhas com os status de atingida",
+            description = "lista as informações da campanha pelo status da meta como conclúídas no banco de dados")
+    @GetMapping("/listarCampanhas")
+    public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas) throws RegraDeNegocioException, CampanhaNaoEncontradaException {
+        return new ResponseEntity<>(campanhaService.listarCampanha(tipoFiltro, minhasContribuicoes, minhasCampanhas), HttpStatus.OK);
     }
 
 }

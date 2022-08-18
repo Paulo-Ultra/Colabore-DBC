@@ -1,14 +1,17 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateComFotoDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
+import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.enums.TipoFiltro;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaNaoEncontradaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
+import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,16 +33,15 @@ public class CampanhaService {
     private final UsuarioService usuarioService;
     private final CampanhaRepository campanhaRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
     private final S3Service s3Service;
 
-    public CampanhaDTO adicionar(CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, AmazonS3Exception {
+    public CampanhaDTO adicionar(CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException {
 
-        UsuarioEntity usuarioRecuperado = usuarioService.getLoggedUser();
+        usuarioService.getLoggedUser();
 
         CampanhaEntity campanhaEntity = objectMapper.convertValue(campanhaCreateDTO, CampanhaEntity.class);
-
-        campanhaEntity.setUsuario(usuarioRecuperado);
-        campanhaEntity.setIdUsuario(usuarioRecuperado.getIdUsuario());
 
         if (campanhaCreateDTO.getArrecadacao() == null) {
             campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
@@ -122,6 +123,56 @@ public class CampanhaService {
                 }).collect(Collectors.toList());
     }
 
+    public List<CampanhaDTO> listarCampanha (TipoFiltro tipoFiltro, boolean minhasContribuicoes, boolean minhasCampanhas) {
+        Integer idUsuario = usuarioService.getIdLoggedUser();
+
+        if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
+            campanhaRepository.findAllByStatusMeta(false).stream()
+                    .map(campanhaEntity -> {
+                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                        try {
+                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
+                        } catch (RegraDeNegocioException e) {
+                            throw new RuntimeException(e);
+                        }
+                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
+                                        .collect(Collectors.toList()));
+                        return campanhaDTO;
+                    }).collect(Collectors.toList());
+        } else if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
+            campanhaRepository.findAllByStatusMeta(true).stream()
+                    .map(campanhaEntity -> {
+                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                        try {
+                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
+                        } catch (RegraDeNegocioException e) {
+                            throw new RuntimeException(e);
+                        }
+                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
+                                .collect(Collectors.toList()));
+                        return campanhaDTO;
+                    }).collect(Collectors.toList());
+        } else {
+            return campanhaRepository.findAll(idUsuario, minhasContribuicoes, minhasCampanhas).stream()
+                    .map(campanhaEntity -> {
+                        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                        try {
+                            campanhaDTO.setUsuario(objectMapper.convertValue(buscarIdUsuario(idUsuario), UsuarioSemSenhaDTO.class));
+                        } catch (RegraDeNegocioException e) {
+                            throw new RuntimeException(e);
+                        }
+                        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                                .map(doadorEntity -> objectMapper.convertValue(doadorEntity, DoadorDTO.class))
+                                .collect(Collectors.toList()));
+                        return campanhaDTO;
+                    }).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+
      private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
         return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
@@ -142,4 +193,9 @@ public class CampanhaService {
         campanhaEntity.setDescricao(campanhaCreateDTO.getDescricao());
         campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
     }
+
+    private UsuarioEntity buscarIdUsuario(Integer id) throws RegraDeNegocioException {
+        return usuarioRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("Usuario não encontrado."));
+    }
+
 }

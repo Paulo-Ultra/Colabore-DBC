@@ -26,8 +26,7 @@ public class S3Service {
     public URI uploadFile(MultipartFile multipartFile) throws AmazonS3Exception {
         try {
             InputStream inputStream = multipartFile.getInputStream();
-            String fileName = multipartFile.getOriginalFilename();
-            fileName = UUID.randomUUID().toString();
+            String fileName = UUID.randomUUID().toString();
             String contentType = multipartFile.getContentType();
             return uploadFile(inputStream, fileName, contentType);
         } catch (IOException ex) {
