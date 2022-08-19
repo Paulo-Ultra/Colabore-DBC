@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration(classes = {CampanhaService.class})
+@ContextConfiguration(classes = {TagService.class})
 @RunWith(MockitoJUnitRunner.class)
 public class TagServiceTest {
 

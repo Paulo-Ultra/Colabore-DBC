@@ -7,9 +7,11 @@ import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
+import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -20,10 +22,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -49,16 +55,33 @@ public class CampanhaServiceTest {
     private UsuarioService usuarioService;
 
     @Mock
+    private AmazonS3 amazonS3;
+    private MockMultipartFile mockMultipartFile;
+    private URL url;
+
+    private final String bucketName = "";
+    @Mock
     private TagService tagService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
-    public void init() {
+    public void init() throws MalformedURLException {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         ReflectionTestUtils.setField(campanhaService, "objectMapper", objectMapper);
+
+        mockMultipartFile = new MockMultipartFile(
+                "foto.pdf",
+                "arquivo",
+                "application/jpg",
+                "{key1: value1}".getBytes());
+
+        url = new URL(
+                "https",
+                "stackoverflow.com",
+                80, "pages/page1.html");
     }
 
     @Test
@@ -83,6 +106,18 @@ public class CampanhaServiceTest {
         assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
         assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
         assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+    }
+
+    @Test
+    public void deveTestarAdicionarFotoComSucesso() throws AmazonS3Exception, CampanhaException {
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(getCampanhaEntityEncerraAutomatico());
+        s3Service.uploadFile(mockMultipartFile);
+
+        campanhaService.adicionarFoto(campanhaEntity.getIdCampanha(), mockMultipartFile);
+
     }
 
     public static UsuarioEntity getUsuarioEntity() {
