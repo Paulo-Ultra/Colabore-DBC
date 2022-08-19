@@ -107,15 +107,15 @@ public class CampanhaServiceTest {
         CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
 
         assertNotNull(campanhaDTO);
-        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
-        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
-        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
-        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
-        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
-        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
-        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
-        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
-        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO2.getIdCampanha());
+        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO2.getArrecadacao());
+        assertEquals(campanhaEntity.getMeta(), campanhaDTO2.getMeta());
+        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO2.getFotoCampanha());
+        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO2.getEncerrarAutomaticamente());
+        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO2.getDataLimite());
+        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO2.getStatusMeta());
+        assertEquals(campanhaEntity.getDescricao(), campanhaDTO2.getDescricao());
+        assertEquals(campanhaEntity.getTitulo(), campanhaDTO2.getTitulo());
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -221,17 +221,20 @@ public class CampanhaServiceTest {
 
     @Test
     public void deveTestarAdicionarFotoComSucesso() throws AmazonS3Exception, CampanhaException {
-        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
-        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
+        CampanhaEntity campanhaEntity = getCampanhaEntityStatusEncerrada();
+
+        final MultipartFile mockFile = mock(MultipartFile.class);
+
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(getCampanhaEntityEncerraAutomatico());
-        s3Service.uploadFile(mockMultipartFile);
+        when(s3Service.uploadFile(mockFile)).thenReturn(URI.create("foto"));
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
 
-        campanhaService.adicionarFoto(campanhaEntity.getIdCampanha(), mockMultipartFile);
+        campanhaService.adicionarFoto(campanhaEntity.getIdUsuario(), mockFile);
 
+        assertNotNull(mockFile);
     }
 
-    @Test(expected = RegraDeNegocioException.class)
+    @Test()
     public void deveTestarEditComSucesso() throws RegraDeNegocioException, CampanhaException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
@@ -266,18 +269,6 @@ public class CampanhaServiceTest {
         assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
     }
 
-    @Test
-    public void deveTestarGetIdLoggedUser() {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        123,
-                        "senha"
-                );
-        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-
-        Integer idLoggedUser = usuarioService.getIdLoggedUser();
-        assertEquals(123, idLoggedUser.intValue());
-    }
 
     public static UsuarioEntity getUsuarioEntity() {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
