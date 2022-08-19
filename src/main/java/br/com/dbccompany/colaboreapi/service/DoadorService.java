@@ -39,6 +39,7 @@ public class DoadorService {
         DoadorEntity doadorEntity = new DoadorEntity();
 
         doadorEntity.setUsuario(usuarioEntity);
+        doadorEntity.setIdUsuario(usuarioEntity.getIdUsuario());
         doadorEntity.setValor(doadorCreateDTO.getValor());
 
         Set<CampanhaEntity> campanhas = new HashSet<>();
@@ -71,10 +72,6 @@ public class DoadorService {
                 campanhaEntity.setStatusMeta(true);
             }
         }
-    }
-
-    public void verificarUsuarioComCampanha (){
-        campanhaService.listaDeCampanhasByUsuarioLogado();
     }
 
     public DoadorDTO retornarDoadorDTO (DoadorEntity doadorEntity) {

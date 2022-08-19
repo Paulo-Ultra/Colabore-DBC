@@ -1,15 +1,16 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
-import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
+import br.com.dbccompany.colaboreapi.dto.doador.DoadorCreateDTO;
+import br.com.dbccompany.colaboreapi.dto.doador.DoadorDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
+import br.com.dbccompany.colaboreapi.exceptions.DoacaoException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
+import br.com.dbccompany.colaboreapi.repository.DoadorRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -20,7 +21,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
@@ -29,19 +29,28 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration(classes = {CampanhaService.class})
 @RunWith(MockitoJUnitRunner.class)
 public class DoadorServiceTest {
 
     @InjectMocks
     private DoadorService doadorService;
 
-
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Mock
+    private UsuarioService usuarioService;
+
+    @Mock
+    private CampanhaService campanhaService;
+
+    @Mock
+    private CampanhaRepository campanhaRepository;
+
+    @Mock
+    private DoadorRepository doadorRepository;
 
     @Before
     public void init() {
@@ -52,10 +61,146 @@ public class DoadorServiceTest {
         ReflectionTestUtils.setField(doadorService, "objectMapper", objectMapper);
     }
 
+    @Test
+    public void deveTestarAdicionarComSucesso() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(doadorRepository.save(any(DoadorEntity.class))).thenReturn(doadorEntity);
+
+        DoadorDTO doadorDTO = doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+
+        assertNotNull(doadorDTO);
+        assertEquals(new BigDecimal(500), doadorDTO.getValor());
+        assertEquals(doadorEntity.getIdUsuario(), doadorDTO.getIdUsuario());
+    }
+
+    @Test(expected = DoacaoException.class)
+    public void deveTestarAdicionarSemSucesso() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+
+        campanhaEntity.setStatusMeta(true);
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+
+        DoadorDTO doadorDTO = doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+
+        assertNotNull(doadorDTO);
+        assertEquals(new BigDecimal(500), doadorDTO.getValor());
+        assertEquals(doadorEntity.getIdUsuario(), doadorDTO.getIdUsuario());
+    }
+
+    @Test(expected = DoacaoException.class)
+    public void deveTestarAdicionarSemSucessoDataLimite() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+
+        campanhaEntity.setStatusMeta(false);
+        campanhaEntity.setDataLimite(LocalDateTime.parse("2021-08-17T00:00:00"));
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+
+        doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+    }
+
+    @Test(expected = DoacaoException.class)
+    public void deveTestarAdicionarSemSucessoMesmoCriador() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(usuarioService.getIdLoggedUser()).thenReturn(1);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+
+        doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+    }
+
+    @Test
+    public void deveTestarAdicionarComSucessoCompararIf() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+        doadorCreateDTO.setValor(new BigDecimal(950000));
+        campanhaEntity.setStatusMeta(false);
+        campanhaEntity.setArrecadacao(new BigDecimal(50));
+        campanhaEntity.setMeta(new BigDecimal(40));
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(doadorRepository.save(any(DoadorEntity.class))).thenReturn(doadorEntity);
+
+        DoadorDTO doadorDTO = doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+
+        assertNotNull(doadorDTO);
+    }
+
+    @Test
+    public void deveTestarAdicionarComSucessoCompararElse() throws CampanhaException, RegraDeNegocioException, DoacaoException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        DoadorCreateDTO doadorCreateDTO = getDoadorCreateDTO();
+        DoadorEntity doadorEntity = getDoadorEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
+        Set<CampanhaEntity> campanhaEntitySet = Set.of(campanhaEntity);
+
+        doadorEntity.setCampanhas(campanhaEntitySet);
+        doadorCreateDTO.setValor(new BigDecimal(30));
+        campanhaEntity.setStatusMeta(false);
+        campanhaEntity.setArrecadacao(new BigDecimal(50));
+        campanhaEntity.setMeta(new BigDecimal(40));
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(doadorRepository.save(any(DoadorEntity.class))).thenReturn(doadorEntity);
+
+        DoadorDTO doadorDTO = doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
+
+        assertNotNull(doadorDTO);
+    }
+
+    public static DoadorCreateDTO getDoadorCreateDTO() {
+        DoadorCreateDTO doadorCreateDTO = new DoadorCreateDTO();
+        doadorCreateDTO.setIdUsuario(1);
+        doadorCreateDTO.setValor(new BigDecimal(500));
+        return doadorCreateDTO;
+    }
+
     public static DoadorEntity getDoadorEntity() {
         DoadorEntity doadorEntity = new DoadorEntity();
         doadorEntity.setIdDoador(1);
         doadorEntity.setUsuario(getUsuarioEntity());
+        doadorEntity.setIdUsuario(1);
         doadorEntity.setValor(new BigDecimal(500));
         doadorEntity.setCampanhas(Set.of(getCampanhaEntityNaoEncerraAutomatico()));
         return doadorEntity;
