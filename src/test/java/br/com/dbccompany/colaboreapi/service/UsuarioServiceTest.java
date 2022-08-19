@@ -10,6 +10,7 @@ import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
@@ -28,8 +29,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,6 +50,8 @@ public class UsuarioServiceTest {
     private UsuarioService usuarioService;
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private S3Service s3Service;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
@@ -77,6 +82,35 @@ public class UsuarioServiceTest {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
 
         usuarioService.adicionar(getUsuarioCreateDTOEmailIncorreto());
+    }
+
+    @Test
+    public void deveTestarAdicionarFotoComSucesso() throws RegraDeNegocioException, AmazonS3Exception {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        deveTestarGetIdLoggedUser();
+        usuarioEntity = getUsuarioEntity();
+
+        final MultipartFile mockFile = mock(MultipartFile.class);
+
+        when(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuarioEntity));
+        when(s3Service.uploadFile(mockFile)).thenReturn(URI.create("foto"));
+        when(usuarioRepository.save(any(UsuarioEntity.class))).thenReturn(usuarioEntity);
+
+        usuarioService.adicionarFoto(mockFile);
+
+        assertNotNull(mockFile);
+
+    }
+
+    @Test
+    public void deveTestarFindByEmail() {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+
+        when(usuarioRepository.findByEmail(anyString())).thenReturn(Optional.of(usuarioEntity));
+
+        usuarioService.findByEmail(usuarioEntity.getEmail());
+
+        assertNotNull(usuarioEntity);
     }
 
     @Test
@@ -145,12 +179,10 @@ public class UsuarioServiceTest {
     }
 
     @Test(expected = RegraDeNegocioException.class)
-    public void deveTestarFindLoginByIdComRxception() throws RegraDeNegocioException {
+    public void deveTestarFindLoginByIdComException() throws RegraDeNegocioException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         deveTestarGetIdLoggedUser();
-
-
-        when(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuarioEntity));
+        usuarioEntity.setIdUsuario(99);
 
         UsuarioDTO usuarioDTO = usuarioService.findLoginById(usuarioEntity.getIdUsuario());
 
