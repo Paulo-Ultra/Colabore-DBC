@@ -70,7 +70,7 @@ public class CampanhaService {
                 .collect(Collectors.toSet());
 
         campanhaEntity.setUsuario(usuarioEntity);
-        campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());
+        campanhaEntity.setIdUsuario(usuarioService.getIdLoggedUser());
         campanhaEntity.setTagEntities(tagEntitySet);
         campanhaEntity.setStatusMeta(false);
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());

@@ -58,6 +58,8 @@ public class DoadorService {
         compararMetaComDoacao(doadorCreateDTO, campanhaEntity);
         campanhaRepository.save(campanhaEntity);
         doadorRepository.save(doadorEntity);
+        //todo pensar um meio de retornar o id do usuario no endpoint da doação
+//        doadorDTO.setIdUsuario(doadorEntity.getUsuario().getIdUsuario());
         return retornarDoadorDTO(doadorEntity);
     }
 
