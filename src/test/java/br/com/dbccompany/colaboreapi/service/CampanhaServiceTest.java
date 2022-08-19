@@ -12,6 +12,7 @@ import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import com.amazonaws.services.s3.AmazonS3;
+import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -23,13 +24,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -62,6 +67,10 @@ public class CampanhaServiceTest {
     private final String bucketName = "";
     @Mock
     private TagService tagService;
+
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
@@ -89,12 +98,114 @@ public class CampanhaServiceTest {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
         TagEntity tagEntity = getTagEntity();
+        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
+        campanhaDTO.setArrecadacao(null);
+
+        when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
+
+        assertNotNull(campanhaDTO);
+        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
+        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
+        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
+        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
+        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
+        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
+        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
+        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
+        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarCreateSemSucesso() throws RegraDeNegocioException, CampanhaException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        TagEntity tagEntity = getTagEntity();
+        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
 
 
         when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
         when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
         when(tagService.findById(anyInt())).thenReturn(tagEntity);
-        CampanhaDTO campanhaDTO = campanhaService.adicionar(getCampanhaDTOStatusEncerrada());
+
+        campanhaDTO.setMeta(new BigDecimal(0));
+        campanhaDTO.setArrecadacao(new BigDecimal(50));
+
+        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
+
+        assertNotNull(campanhaDTO);
+        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
+        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
+        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
+        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
+        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
+        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
+        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
+        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
+        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarCreateSemSucessoDataPosterior() throws RegraDeNegocioException, CampanhaException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        TagEntity tagEntity = new TagEntity();
+        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
+
+        tagEntity.setIdTag(null);
+        tagEntity.setCampanhaEntities(null);
+        tagEntity.setNomeTag(null);
+
+        campanhaDTO.setDataLimite(LocalDateTime.now());
+
+        when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setNomeTag("oi");
+        tagDTO.setIdTag(null);
+        Set<TagDTO> tagDTOSet = Set.of(tagDTO);
+        campanhaDTO.setTags(tagDTOSet);
+
+        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
+
+        assertNotNull(campanhaDTO);
+        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
+        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
+        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
+        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
+        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
+        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
+        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
+        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
+        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarCreateSemSucessoSet() throws RegraDeNegocioException, CampanhaException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        TagEntity tagEntity = new TagEntity();
+        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
+
+        tagEntity.setIdTag(null);
+        tagEntity.setCampanhaEntities(null);
+        tagEntity.setNomeTag(null);
+
+        when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setNomeTag("oi");
+        tagDTO.setIdTag(null);
+        Set<TagDTO> tagDTOSet = Set.of(tagDTO);
+        campanhaDTO.setTags(tagDTOSet);
+
+        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
 
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
@@ -118,6 +229,54 @@ public class CampanhaServiceTest {
 
         campanhaService.adicionarFoto(campanhaEntity.getIdCampanha(), mockMultipartFile);
 
+    }
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarEditComSucesso() throws RegraDeNegocioException, CampanhaException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        TagEntity tagEntity = new TagEntity();
+        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
+
+        tagEntity.setIdTag(null);
+        tagEntity.setCampanhaEntities(null);
+        tagEntity.setNomeTag(null);
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setNomeTag("oi");
+        tagDTO.setIdTag(null);
+        Set<TagDTO> tagDTOSet = Set.of(tagDTO);
+        campanhaDTO.setTags(tagDTOSet);
+
+        CampanhaDTO campanhaDTO2 = campanhaService.editar(1, campanhaDTO);
+
+        assertNotNull(campanhaDTO);
+        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
+        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
+        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
+        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
+        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
+        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
+        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
+        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
+        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+    }
+
+    @Test
+    public void deveTestarGetIdLoggedUser() {
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        123,
+                        "senha"
+                );
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+
+        Integer idLoggedUser = usuarioService.getIdLoggedUser();
+        assertEquals(123, idLoggedUser.intValue());
     }
 
     public static UsuarioEntity getUsuarioEntity() {
