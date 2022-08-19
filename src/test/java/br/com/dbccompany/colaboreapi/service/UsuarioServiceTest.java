@@ -42,7 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-@ContextConfiguration(classes = {CampanhaService.class})
+@ContextConfiguration(classes = {UsuarioService.class})
 @RunWith(MockitoJUnitRunner.class)
 public class UsuarioServiceTest {
 
