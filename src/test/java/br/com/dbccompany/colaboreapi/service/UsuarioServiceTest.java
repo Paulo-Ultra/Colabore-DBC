@@ -145,7 +145,7 @@ public class UsuarioServiceTest {
     }
 
     @Test(expected = RegraDeNegocioException.class)
-    public void deveTestarFindLoginByIdComRxception() throws RegraDeNegocioException {
+    public void deveTestarFindLoginByIdComException() throws RegraDeNegocioException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         deveTestarGetIdLoggedUser();
 
