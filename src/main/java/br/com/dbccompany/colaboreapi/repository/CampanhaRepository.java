@@ -21,7 +21,8 @@ public interface CampanhaRepository extends JpaRepository<CampanhaEntity, Intege
            " where (:minhasContribuicoes = false OR d.idUsuario = :idUsuario )  " +
            "   and (t.idTag in :idTag OR :idTag is null) " +
            "   and (:minhasCampanhas = false OR c.idUsuario = :idUsuario) " +
-           " and (:statusMeta is null OR c.statusMeta = :statusMeta) order by c.dataLimite asc" )
+           "   and (CURRENT_TIMESTAMP > c.dataLimite) " +
+           "   and (:statusMeta is null OR c.statusMeta = :statusMeta) order by c.dataLimite asc" )
    List<CampanhaEntity> findAll(@Param("statusMeta") Boolean statusMeta,
                                 @Param("idUsuario")Integer idUsuario,
                                 @Param("idTag")List<Integer> idTag,
