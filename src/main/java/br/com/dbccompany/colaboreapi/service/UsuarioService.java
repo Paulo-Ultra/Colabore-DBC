@@ -100,9 +100,7 @@ public class UsuarioService {
     public Integer getIdLoggedUser() {
         return (Integer) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
-    public UsuarioDTO getLoggedUserDTO() throws RegraDeNegocioException {
-        return findLoginById(getIdLoggedUser());
-    }
+
     public UsuarioDTO convertToDTO (UsuarioEntity usuarioEntity) {
         return objectMapper.convertValue(usuarioEntity, UsuarioDTO.class);
     }
