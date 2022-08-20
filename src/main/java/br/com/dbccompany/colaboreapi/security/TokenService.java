@@ -24,11 +24,6 @@ public class TokenService {
     @Value("${jwt.expiration}")
     private String expiration;
 
-    private final UsuarioService usuarioService;
-    //private static final String TOKEN_PREFIX = "Bearer ";
-
-
-    //criando um token JWT
     public String getToken(UsuarioEntity usuarioEntity) throws RegraDeNegocioException {
 
         Date now = new Date();
@@ -46,7 +41,6 @@ public class TokenService {
         return TokenAuthenticationFilter.BEARER + token;
     }
 
-    //validar se o token é válido e retornar o usuário se for válido
     public UsernamePasswordAuthenticationToken isValid(String token) {
         if(token == null) {
             return null;

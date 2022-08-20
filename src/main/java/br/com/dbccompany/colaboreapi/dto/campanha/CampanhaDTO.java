@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.dto.campanha;
 
-import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 

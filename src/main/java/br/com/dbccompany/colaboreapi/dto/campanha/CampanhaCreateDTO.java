@@ -1,16 +1,11 @@
 package br.com.dbccompany.colaboreapi.dto.campanha;
 
-import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
-import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
-import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Data
 public class CampanhaCreateDTO {

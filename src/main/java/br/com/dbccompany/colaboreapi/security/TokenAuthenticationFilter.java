@@ -22,20 +22,16 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        //buscando o token da request
         String token = getTokenFromHeader(request);
 
-        //buscando o is valid de token service para validar o token
         UsernamePasswordAuthenticationToken dtoDoSpringSecurity = tokenService.isValid(token);
 
-        //setando a autenticação
         SecurityContextHolder.getContext().setAuthentication(dtoDoSpringSecurity);
 
         filterChain.doFilter(request, response);
     }
 
 
-    // adicionar o usuário no contexto do spring security
     private String getTokenFromHeader(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         if (token == null) {

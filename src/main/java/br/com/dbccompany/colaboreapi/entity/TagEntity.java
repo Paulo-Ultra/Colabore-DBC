@@ -18,9 +18,6 @@ public class TagEntity {
     @Column(name = "id_tag")
     private Integer idTag;
 
-    /*@Column(name = "id_campanha", insertable = false, updatable = false)
-    private Integer idCampanha;*/
-
     @Column(name = "nome_tag")
     private String nomeTag;
 
