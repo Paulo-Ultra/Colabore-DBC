@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TagRepository extends JpaRepository<TagEntity, Integer> {
@@ -14,5 +14,7 @@ public interface TagRepository extends JpaRepository<TagEntity, Integer> {
     @Query(value = " SELECT COUNT(*)" +
             " FROM tag t" +
             " WHERE nome_tag = :nomeTag")
-    Integer findByNomeTag(@Param("nomeTag") String nomeTag);
+    Integer findByNomeTagCount(@Param("nomeTag") String nomeTag);
+
+    Optional<TagEntity> findByNomeTag (String nomeTag);
 }

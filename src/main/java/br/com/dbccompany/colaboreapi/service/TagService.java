@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,11 +22,11 @@ public class TagService {
 
     private final ObjectMapper objectMapper;
 
-    public TagDTO adicionar(TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
+    public TagEntity adicionar(TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
 
         tagCreateDTO.setNomeTag(tagCreateDTO.getNomeTag().toLowerCase());
 
-        Integer verificaExistenciaTag = tagRepository.findByNomeTag(tagCreateDTO.getNomeTag());
+        Integer verificaExistenciaTag = tagRepository.findByNomeTagCount(tagCreateDTO.getNomeTag());
 
         if(verificaExistenciaTag > 0 ){
             throw new RegraDeNegocioException("Esta tag já existe!");
@@ -35,9 +36,7 @@ public class TagService {
         }
         TagEntity tagEntity = objectMapper.convertValue(tagCreateDTO, TagEntity.class);
         TagEntity novaTag = tagRepository.save(tagEntity);
-        TagDTO tagDTO = objectMapper.convertValue(novaTag, TagDTO.class);
-
-        return tagDTO;
+        return novaTag;
     }
 
     public List<TagDTO> list() {
@@ -50,6 +49,10 @@ public class TagService {
         TagEntity tagEntity = tagRepository.findById(id)
                 .orElseThrow(() -> new RegraDeNegocioException("Tag não localizada!"));
         return tagEntity;
+    }
+
+    public Optional<TagEntity> findByNomeTag(String nomeTag) {
+        return tagRepository.findByNomeTag(nomeTag);
     }
 
     public void delete(Integer id) throws RegraDeNegocioException {

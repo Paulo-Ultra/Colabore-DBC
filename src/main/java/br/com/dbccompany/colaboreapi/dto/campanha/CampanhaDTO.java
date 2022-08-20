@@ -1,10 +1,10 @@
 package br.com.dbccompany.colaboreapi.dto.campanha;
 
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
-import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +20,6 @@ public class CampanhaDTO extends CampanhaCreateDTO {
     @Schema(hidden = true)
     private List<DoadorCampanhaDTO> doacoes;
 
-//    @Schema(hidden = true)
-    private Set<TagDTO> tags;
+    @NotEmpty
+    private Set<String> tags;
 }

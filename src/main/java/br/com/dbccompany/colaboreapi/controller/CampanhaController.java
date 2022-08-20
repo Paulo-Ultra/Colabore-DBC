@@ -42,7 +42,7 @@ public class CampanhaController {
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
     public ResponseEntity<Void> cadastrarFoto (@ModelAttribute MultipartFile multipartFile,
-                                               @RequestParam Integer idCampanha) throws RegraDeNegocioException, AmazonS3Exception, CampanhaException, IOException {
+                                               @RequestParam Integer idCampanha) throws AmazonS3Exception, CampanhaException, IOException {
         campanhaService.adicionarFoto(idCampanha, multipartFile);
         return ResponseEntity.ok().build();
     }

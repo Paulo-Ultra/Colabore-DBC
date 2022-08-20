@@ -13,6 +13,7 @@ import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
+import br.com.dbccompany.colaboreapi.repository.TagRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 import java.util.Optional;
@@ -39,13 +41,10 @@ public class CampanhaService {
     private final ObjectMapper objectMapper;
 
     private final UsuarioService usuarioService;
-
     private final TagService tagService;
 
+    private final TagRepository tagRepository;
     private final CampanhaRepository campanhaRepository;
-
-    private final UsuarioRepository usuarioRepository;
-
     private final S3Service s3Service;
 
     public CampanhaDTO adicionar(CampanhaDTO campanhaDTO) throws RegraDeNegocioException, CampanhaException {
@@ -61,34 +60,34 @@ public class CampanhaService {
         if (campanhaDTO.getArrecadacao() == null) {
             campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
         }
-
-        Set<TagCreateDTO> tagDTOS = campanhaDTO.getTags().stream()
-                .map(tagDTO -> {
-                    TagCreateDTO tagCreateDTO = new TagCreateDTO();
-                    try {
-                        tagCreateDTO = tagService.adicionar(tagCreateDTO);
-                    } catch (RegraDeNegocioException e) {
-                        throw new RuntimeException(e);
-                    }
-                    return tagCreateDTO;
-                })
-                .collect(Collectors.toSet());
-
-        Set<TagEntity> tagEntities = objectMapper.convertValue(tagDTOS, (JavaType) Set.of(TagEntity.class));
-
         campanhaEntity.setUsuario(usuarioEntity);
         campanhaEntity.setIdUsuario(usuarioService.getIdLoggedUser());
-        campanhaEntity.setTagEntities(tagEntities);
         campanhaEntity.setStatusMeta(false);
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         if(campanhaEntity.getDataLimite().isBefore(LocalDateTime.now()) || campanhaEntity.getDataLimite().isEqual(LocalDateTime.now())){
             throw new CampanhaException("A campanha deve ser criada com uma data posterior a de hoje");
         }
 
-        campanhaDTO = retornarDTO(campanhaRepository.save(campanhaEntity));
-        campanhaDTO.setTags(objectMapper.convertValue(campanhaEntity.getTagEntities(), Set.class));
+        Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
+                .map(tagString -> {
+                    Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
+                    if(nomeTag.isPresent()){
+                        return nomeTag.get();
+                    }
+                    else {
+                        try {
+                            return tagService.adicionar(new TagCreateDTO(tagString));
+                        } catch (RegraDeNegocioException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .collect(Collectors.toSet());
 
-        return campanhaDTO;
+        campanhaEntity.setTagEntities(tagEntities);
+        campanhaRepository.save(campanhaEntity);
+        CampanhaDTO campanhaDTO1 = getCampanhaByIdDTO(campanhaEntity);
+        return campanhaDTO1;
     }
 
     public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException, IOException {
@@ -116,7 +115,7 @@ public class CampanhaService {
 
         verificaCriadorDaCampanha(id);
 
-        return retornarDTO(campanhaRepository.save(campanhaRecuperada));
+        return getCampanhaByIdDTO(campanhaRepository.save(campanhaRecuperada));
     }
 
     public CampanhaDTO localizarCampanha(Integer idCampanha) throws CampanhaException {
@@ -127,7 +126,7 @@ public class CampanhaService {
     public List<CampanhaDTO> listaDeCampanhasByUsuarioLogado() {
         return campanhaRepository.findAllByIdUsuario(usuarioService.getIdLoggedUser())
                 .stream().map(campanhaEntity -> {
-                    CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+                    CampanhaDTO campanhaDTO = getCampanhaByIdDTO(campanhaEntity);
                     return campanhaDTO;
                 }).collect(Collectors.toList());
     }
@@ -158,27 +157,26 @@ public class CampanhaService {
     }
 
     private CampanhaDTO getCampanhaByIdDTO(CampanhaEntity campanhaEntity) {
-        CampanhaDTO campanhaDTO = retornarDTO(campanhaEntity);
+        CampanhaDTO campanhaDTO = objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
         campanhaDTO.getStatusMeta();
         campanhaDTO.setNome(campanhaEntity.getUsuario().getNome());
-        campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
-                .map(doadorEntity -> {
-                    DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
-                    UsuarioEntity usuarioEntity = doadorEntity.getUsuario();
-                    doadorCampanhaDTO.setNome(usuarioEntity.getNome());
-                    doadorCampanhaDTO.setFoto(usuarioEntity.getFoto());
-                    return doadorCampanhaDTO;
-                })
-                .collect(Collectors.toList()));
-        campanhaDTO.setTags(campanhaEntity.getTagEntities().stream()
-                .map(tagEntity -> objectMapper.convertValue(tagEntity, TagDTO.class))
-                .collect(Collectors.toSet()));
+        if(campanhaEntity.getDoadores() != null) {
+            campanhaDTO.setDoacoes(campanhaEntity.getDoadores().stream()
+                    .map(doadorEntity -> {
+                        DoadorCampanhaDTO doadorCampanhaDTO = objectMapper.convertValue(doadorEntity, DoadorCampanhaDTO.class);
+                        UsuarioEntity usuarioEntity = doadorEntity.getUsuario();
+                        doadorCampanhaDTO.setNome(usuarioEntity.getNome());
+                        doadorCampanhaDTO.setFoto(usuarioEntity.getFoto());
+                        return doadorCampanhaDTO;
+                    })
+                    .collect(Collectors.toList()));
+        }
+        if(campanhaEntity.getTagEntities() != null) {
+            campanhaDTO.setTags(campanhaEntity.getTagEntities().stream()
+                    .map(tagEntity -> tagEntity.getNomeTag())
+                    .collect(Collectors.toSet()));
+        }
         return campanhaDTO;
-
-    }
-
-    private CampanhaDTO retornarDTO(CampanhaEntity campanhaEntity) {
-        return objectMapper.convertValue(campanhaEntity, CampanhaDTO.class);
     }
 
     public CampanhaEntity buscarIdCampanha(Integer id) throws CampanhaException {

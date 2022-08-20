@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.controller;
 
 import br.com.dbccompany.colaboreapi.dto.tag.TagCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
+import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.service.TagService;
 
@@ -25,7 +26,7 @@ public class TagController {
 
     @Operation(summary = "Adiciona uma tag.", description = "Adiciona uma tag dentro do banco de dados.")
     @PostMapping()
-    public ResponseEntity<TagDTO> adicionar(@Valid @RequestBody TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
+    public ResponseEntity<TagEntity> adicionar(@Valid @RequestBody TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
         return ResponseEntity.ok(tagService.adicionar(tagCreateDTO));
     }
 

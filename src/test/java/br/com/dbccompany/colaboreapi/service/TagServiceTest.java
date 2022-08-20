@@ -54,7 +54,7 @@ public class TagServiceTest {
     @Test
     public void deveTestarAdicionarComSucesso() throws RegraDeNegocioException {
 
-        when(tagRepository.findByNomeTag(anyString())).thenReturn(getTagEntitySemId().getIdTag());
+        when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntitySemId().getIdTag());
         when(tagRepository.save(any(TagEntity.class))).thenReturn(getTagEntitySemId());
 
         TagDTO tagDTO = tagService.adicionar(getTagCreateDTO());
@@ -66,7 +66,7 @@ public class TagServiceTest {
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarAdicionarComExceptionTagExiste() throws RegraDeNegocioException {
 
-        when(tagRepository.findByNomeTag(anyString())).thenReturn(getTagEntity().getIdTag());
+        when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntity().getIdTag());
 
         tagService.adicionar(getTagCreateDTO());
     }
@@ -74,7 +74,7 @@ public class TagServiceTest {
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarAdicionarComExceptionTagNulaOuVazia() throws RegraDeNegocioException {
 
-        when(tagRepository.findByNomeTag(anyString())).thenReturn(getTagEntitySemNome().getIdTag());
+        when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntitySemNome().getIdTag());
 
         tagService.adicionar(getTagCreateDTOSemNome());
 
