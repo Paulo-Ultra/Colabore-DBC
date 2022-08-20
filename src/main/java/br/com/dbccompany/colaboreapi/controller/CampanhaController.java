@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class CampanhaController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> cadastrarFoto (@ModelAttribute MultipartFile multipartFile,
+    public ResponseEntity<Void> cadastrarFoto (@Valid @NotNull @ModelAttribute MultipartFile multipartFile,
                                                @RequestParam Integer idCampanha) throws AmazonS3Exception, CampanhaException, IOException {
         campanhaService.adicionarFoto(idCampanha, multipartFile);
         return ResponseEntity.ok().build();
