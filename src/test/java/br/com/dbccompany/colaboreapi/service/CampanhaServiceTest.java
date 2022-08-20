@@ -237,25 +237,17 @@ public class CampanhaServiceTest {
     @Test()
     public void deveTestarEditComSucesso() throws RegraDeNegocioException, CampanhaException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
-        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        CampanhaEntity campanhaEntity = getCampanhaEntitySemDoacao();
         TagEntity tagEntity = new TagEntity();
-        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
 
-        tagEntity.setIdTag(null);
-        tagEntity.setCampanhaEntities(null);
-        tagEntity.setNomeTag(null);
 
         when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
         when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
         when(tagService.findById(anyInt())).thenReturn(tagEntity);
 
-        TagDTO tagDTO = new TagDTO();
-        tagDTO.setNomeTag("oi");
-        tagDTO.setIdTag(null);
-        Set<TagDTO> tagDTOSet = Set.of(tagDTO);
-        campanhaDTO.setTags(tagDTOSet);
-
-        CampanhaDTO campanhaDTO2 = campanhaService.editar(1, campanhaDTO);
+        CampanhaDTO campanhaDTO = campanhaService.editar(1, getCampanhaCreateDTOStatusEncerrada());
 
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
@@ -269,6 +261,39 @@ public class CampanhaServiceTest {
         assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
     }
 
+    @Test(expected = RegraDeNegocioException.class)
+    public void deveTestarEditComException() throws RegraDeNegocioException, CampanhaException {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
+        TagEntity tagEntity = new TagEntity();
+
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+
+        campanhaService.editar(1, getCampanhaCreateDTOStatusEncerrada());
+    }
+
+    @Test
+    public void deveTestarLocalizarCampanha() throws CampanhaException {
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+
+        CampanhaDTO campanhaDTO = campanhaService.localizarCampanha(campanhaEntity.getIdCampanha());
+
+        assertNotNull(campanhaDTO);
+    }
+
+    @Test
+    public void deveTestarListaDeCampanhasByUsuarioLogado() {
+
+        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(getCampanhaEntitySemDoacao()));
+
+        List<CampanhaDTO> campanhaDTOS = campanhaService.listaDeCampanhasByUsuarioLogado();
+    }
 
     public static UsuarioEntity getUsuarioEntity() {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
@@ -306,6 +331,25 @@ public class CampanhaServiceTest {
         campanhaEntity.setIdCampanha(1);
         campanhaEntity.setFotoCampanha("foto_capa.jpeg");
         campanhaEntity.setArrecadacao(new BigDecimal(200.00));
+        campanhaEntity.setTitulo("Livros usados");
+        campanhaEntity.setDescricao("Doação de livros usados");
+        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
+        campanhaEntity.setMeta(new BigDecimal(2000.00));
+        campanhaEntity.setUsuario(getUsuarioEntity());
+        campanhaEntity.setDoadores(new HashSet<>());
+        campanhaEntity.setIdUsuario(1);
+        campanhaEntity.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
+        campanhaEntity.setEncerrarAutomaticamente(false);
+        campanhaEntity.setTagEntities(Set.of(getTagEntity()));
+        campanhaEntity.setStatusMeta(false);
+        return campanhaEntity;
+    }
+
+    public static CampanhaEntity getCampanhaEntitySemDoacao() {
+        CampanhaEntity campanhaEntity = new CampanhaEntity();
+        campanhaEntity.setIdCampanha(1);
+        campanhaEntity.setFotoCampanha("foto_capa.jpeg");
+        campanhaEntity.setArrecadacao(new BigDecimal(0));
         campanhaEntity.setTitulo("Livros usados");
         campanhaEntity.setDescricao("Doação de livros usados");
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());

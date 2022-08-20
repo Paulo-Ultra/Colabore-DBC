@@ -191,7 +191,4 @@ public class CampanhaService {
         campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
     }
 
-    private UsuarioEntity buscarIdUsuario(Integer id) throws RegraDeNegocioException {
-        return usuarioRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("Usuario não encontrado."));
-    }
 }
