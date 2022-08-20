@@ -15,7 +15,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -25,17 +24,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // Desabilitar frameOptions
         http.headers().frameOptions().disable().and()
-                // Habilitar cors
                 .cors().and()
-                // Desabilitar csrf
                 .csrf().disable()
-                // Adicionar regras de requisição
                 .authorizeHttpRequests((auth) ->
                         auth.antMatchers("/", "/autenticacao", "/autenticacao/cadastrar", "/autenticacao/login").permitAll()
                                 .anyRequest().authenticated());
-        // Adicionar filtro do token
         http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -66,7 +60,6 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    //retorna a autenticação do spring
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

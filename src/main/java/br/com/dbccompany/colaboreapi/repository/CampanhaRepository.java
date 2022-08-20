@@ -27,7 +27,4 @@ public interface CampanhaRepository extends JpaRepository<CampanhaEntity, Intege
                                 @Param("idTag")List<Integer> idTag,
                                 @Param("minhasContribuicoes") Boolean minhasContribuicoes,
                                 @Param("minhasCampanhas") Boolean minhasCampanhas);
-
-
-
 }

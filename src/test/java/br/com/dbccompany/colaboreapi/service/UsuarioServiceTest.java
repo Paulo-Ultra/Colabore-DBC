@@ -1,19 +1,11 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
-import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
-import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
-import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
-import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
-import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
-import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,10 +24,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.URI;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -203,14 +194,4 @@ public class UsuarioServiceTest {
         usuarioCreateDTO.setEmail("teste@gmail.com");
         return usuarioCreateDTO;
     }
-
-    public static UsuarioSemSenhaDTO getUsuarioSemSenhaDTO() {
-        UsuarioSemSenhaDTO usuarioSemSenhaDTO = new UsuarioSemSenhaDTO();
-        usuarioSemSenhaDTO.setNome("Teste");
-        usuarioSemSenhaDTO.setEmail("teste@gmail.com");
-        usuarioSemSenhaDTO.setIdUsuario(1);
-        usuarioSemSenhaDTO.setFoto("teste.jpg");
-        return usuarioSemSenhaDTO;
-    }
-
 }

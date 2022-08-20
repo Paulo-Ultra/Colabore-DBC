@@ -44,7 +44,8 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,20 +64,12 @@ public class CampanhaServiceTest {
     @Mock
     private UsuarioService usuarioService;
 
-    @Mock
-    private AmazonS3 amazonS3;
     private MockMultipartFile mockMultipartFile;
     private URL url;
 
     private final String bucketName = "";
     @Mock
     private TagService tagService;
-
-    @Mock
-    private TagRepository tagRepository;
-
-    @Mock
-    private UsuarioRepository usuarioRepository;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -123,7 +116,6 @@ public class CampanhaServiceTest {
 
         when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
         when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
-//        when(tagRepository.findByNomeTagCount("livros")).thenReturn(1);
         when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
 
         campanhaService.adicionar(campanhaDTO);
@@ -133,15 +125,13 @@ public class CampanhaServiceTest {
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarCreateSemSucesso() throws RegraDeNegocioException, CampanhaException {
-        UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
-        TagEntity tagEntity = getTagEntity();
         CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
 
         campanhaDTO.setMeta(new BigDecimal(0));
         campanhaDTO.setArrecadacao(new BigDecimal(50));
 
-        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
+        campanhaService.adicionar(campanhaDTO);
 
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
@@ -173,9 +163,8 @@ public class CampanhaServiceTest {
         TagDTO tagDTO = new TagDTO();
         tagDTO.setNomeTag("oi");
         tagDTO.setIdTag(null);
-        Set<TagDTO> tagDTOSet = Set.of(tagDTO);
 
-        CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
+        campanhaService.adicionar(campanhaDTO);
 
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
@@ -303,9 +292,7 @@ public class CampanhaServiceTest {
 
     @Test(expected = RegraDeNegocioException.class)
     public void deveTestarEditComException() throws RegraDeNegocioException, CampanhaException {
-        UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
-        TagEntity tagEntity = new TagEntity();
         CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
 
         campanhaDTO.setArrecadacao(new BigDecimal(95000));
@@ -355,8 +342,6 @@ public class CampanhaServiceTest {
         TipoFiltro tipoFiltro = TipoFiltro.META_ATINGIDA;
         Boolean minhasContribuicoes = false, minhasCampanhas = false;
         List<Integer> idTags = List.of(1);
-        Integer idUsuario = 1;
-        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
 
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
@@ -368,8 +353,6 @@ public class CampanhaServiceTest {
         TipoFiltro tipoFiltro = TipoFiltro.META_NAO_ATINGIDA;
         Boolean minhasContribuicoes = false, minhasCampanhas = false;
         List<Integer> idTags = List.of(1);
-        Integer idUsuario = 1;
-        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
 
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
@@ -381,9 +364,6 @@ public class CampanhaServiceTest {
         TipoFiltro tipoFiltro = TipoFiltro.TODAS;
         Boolean minhasContribuicoes = false, minhasCampanhas = false;
         List<Integer> idTags = List.of(1);
-        Integer idUsuario = 1;
-        DoadorEntity doadorEntity = getDoadorEntity();
-        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
 
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
@@ -479,21 +459,6 @@ public class CampanhaServiceTest {
         return campanhaEntity;
     }
 
-    public static CampanhaCreateDTO getCampanhaCreateDTOStatusEncerrada() {
-        CampanhaCreateDTO campanhaCreateDTO = new CampanhaCreateDTO();
-        campanhaCreateDTO.setFotoCampanha("foto_capa.jpeg");
-        campanhaCreateDTO.setArrecadacao(new BigDecimal(200.00));
-        campanhaCreateDTO.setTitulo("Livros usados");
-        campanhaCreateDTO.setDescricao("Doação de livros usados");
-        campanhaCreateDTO.setUltimaAlteracao(LocalDateTime.now());
-        campanhaCreateDTO.setMeta(new BigDecimal(2000.00));
-        campanhaCreateDTO.setIdUsuario(1);
-        campanhaCreateDTO.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
-        campanhaCreateDTO.setEncerrarAutomaticamente(true);
-        campanhaCreateDTO.setStatusMeta(true);
-        return campanhaCreateDTO;
-    }
-
     public static CampanhaDTO getCampanhaDTOStatusEncerrada() {
         CampanhaDTO campanhaDTO = new CampanhaDTO();
         campanhaDTO.setFotoCampanha("foto_capa.jpeg");
@@ -515,13 +480,6 @@ public class CampanhaServiceTest {
         tagEntity.setNomeTag("tagTeste1");
         tagEntity.setCampanhaEntities(Set.of(getCampanhaEntityEncerraAutomatico()));
         return tagEntity;
-    }
-
-    public static TagDTO getTagDTO(){
-        TagDTO tagDTO = new TagDTO();
-        tagDTO.setIdTag(1);
-        tagDTO.setNomeTag("tagTeste1");
-        return tagDTO;
     }
 
     public static DoadorEntity getDoadorEntity() {

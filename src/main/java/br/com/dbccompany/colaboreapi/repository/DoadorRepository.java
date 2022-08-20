@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface DoadorRepository extends JpaRepository<DoadorEntity, Integer>{
-    List<DoadorEntity> findByIdUsuario(Integer idUsuario);
 }

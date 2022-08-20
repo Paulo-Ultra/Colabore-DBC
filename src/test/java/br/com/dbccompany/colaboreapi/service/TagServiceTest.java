@@ -23,7 +23,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -52,7 +55,7 @@ public class TagServiceTest {
     }
 
     @Test
-    public void deveTestarAdicionarComSucesso() throws RegraDeNegocioException {
+    public void deveTestarAdicionarComSucesso(){
 
         when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntitySemId().getIdTag());
         when(tagRepository.save(any(TagEntity.class))).thenReturn(getTagEntitySemId());
@@ -64,7 +67,7 @@ public class TagServiceTest {
     }
 
     @Test
-    public void deveTestarAdicionarComExceptionTagExiste() throws RegraDeNegocioException {
+    public void deveTestarAdicionarComExceptionTagExiste(){
 
         when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntity().getIdTag());
 
@@ -72,7 +75,7 @@ public class TagServiceTest {
     }
 
     @Test
-    public void deveTestarAdicionarComExceptionTagNulaOuVazia() throws RegraDeNegocioException {
+    public void deveTestarAdicionarComExceptionTagNulaOuVazia(){
 
         when(tagRepository.findByNomeTagCount(anyString())).thenReturn(getTagEntitySemNome().getIdTag());
 
@@ -107,7 +110,7 @@ public class TagServiceTest {
     }
 
     @Test
-    public void deveTestarFindByNomeTag() throws RegraDeNegocioException {
+    public void deveTestarFindByNomeTag(){
 
         String nome = "livros";
         TagEntity tagEntity = getTagEntity();
@@ -123,15 +126,6 @@ public class TagServiceTest {
         tagService.findById(null);
     }
 
-    public static DoadorEntity getDoadorEntity() {
-        DoadorEntity doadorEntity = new DoadorEntity();
-        doadorEntity.setIdDoador(1);
-        doadorEntity.setUsuario(getUsuarioEntity());
-        doadorEntity.setValor(new BigDecimal(500));
-        doadorEntity.setCampanhas(Set.of(getCampanhaEntityNaoEncerraAutomatico()));
-        return doadorEntity;
-    }
-
     public static UsuarioEntity getUsuarioEntity() {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
         usuarioEntity.setIdUsuario(1);
@@ -142,25 +136,6 @@ public class TagServiceTest {
         usuarioEntity.setSenha("123");
         usuarioEntity.setEmail("teste@dbccompany.com.br");
         return usuarioEntity;
-    }
-
-    public static CampanhaEntity getCampanhaEntityNaoEncerraAutomatico() {
-        CampanhaEntity campanhaEntity = new CampanhaEntity();
-        campanhaEntity.setIdCampanha(1);
-        campanhaEntity.setFotoCampanha("foto_capa.jpeg");
-        campanhaEntity.setArrecadacao(new BigDecimal(200.00));
-        campanhaEntity.setTitulo("Livros usados");
-        campanhaEntity.setDescricao("Doação de livros usados");
-        campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
-        campanhaEntity.setMeta(new BigDecimal(2000.00));
-        campanhaEntity.setUsuario(getUsuarioEntity());
-        campanhaEntity.setDoadores(new HashSet<>());
-        campanhaEntity.setIdUsuario(1);
-        campanhaEntity.setDataLimite(LocalDateTime.of(2022, 9, 17, 23, 59, 59));
-        campanhaEntity.setEncerrarAutomaticamente(false);
-        campanhaEntity.setTagEntities(Set.of(getTagEntitySemId()));
-        campanhaEntity.setStatusMeta(false);
-        return campanhaEntity;
     }
 
     public static CampanhaEntity getCampanhaEntityEncerraAutomatico() {
