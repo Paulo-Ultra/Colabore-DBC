@@ -281,6 +281,8 @@ public class CampanhaServiceTest {
     @Test
     public void deveTestarLocalizarCampanha() throws CampanhaException {
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+        Set<DoadorEntity> doadorEntitySet = Set.of(getDoadorEntity());
+        campanhaEntity.setDoadores(doadorEntitySet);
 
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
 
