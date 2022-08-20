@@ -65,24 +65,14 @@ public class S3ServiceTest {
         assertNotNull(uri);
     }
 
-//    @Test(expected = IOException.class)
-//    public void deveTestarUploadFileComIOException() throws AmazonS3Exception, IOException {
-//
-//        doReturn(null).when(amazonS3).putObject(any(), any(), any(), any());
-//        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
-////        when(mockMultipartFile.getInputStream()).thenThrow(IOException.class);
-//        URI uri = s3Service.uploadFile(mockMultipartFile);
-//        assertNotNull(uri);
-//    }
-//
     @Test(expected = AmazonS3Exception.class)
     public void deveTestarUploadFileComURIException() throws AmazonS3Exception, IOException {
 
-        URL url = new URL("http://www.javacodegeeks.com");
+        URL url = new URL("http://www.google.com");
         doReturn(null).when(amazonS3).putObject(any(), any(), any(), any());
         when(amazonS3.getUrl(anyString(), anyString())).thenReturn(new URL(
                 "https",
-                "stackoverflow .com",
+                "google .com",
                 80, "pages/page1.html"
         ));
         s3Service.uploadFile(mockMultipartFile);
