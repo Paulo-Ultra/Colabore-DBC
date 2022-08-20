@@ -2,6 +2,7 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.campanha.DoadorCampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
