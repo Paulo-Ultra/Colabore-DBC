@@ -23,15 +23,11 @@ public class S3Service {
 
     private final AmazonS3 amazonS3;
 
-    public URI uploadFile(MultipartFile multipartFile) throws AmazonS3Exception {
-        try {
+    public URI uploadFile(MultipartFile multipartFile) throws AmazonS3Exception, IOException {
             InputStream inputStream = multipartFile.getInputStream();
             String fileName = UUID.randomUUID().toString();
             String contentType = multipartFile.getContentType();
             return uploadFile(inputStream, fileName, contentType);
-        } catch (IOException ex) {
-            throw new AmazonS3Exception("Erro ao salvar a imagem!");
-        }
     }
 
     public URI uploadFile(InputStream inputStream, String fileName, String contentType) throws AmazonS3Exception {

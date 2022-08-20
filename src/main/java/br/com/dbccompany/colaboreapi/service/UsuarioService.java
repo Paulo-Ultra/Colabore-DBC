@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,7 @@ public class UsuarioService {
 
     private final S3Service s3Service;
 
-    public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
+    public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
 
         UsuarioEntity usuarioEntity = getLoggedUser();
         URI uri = s3Service.uploadFile(multipartFile);

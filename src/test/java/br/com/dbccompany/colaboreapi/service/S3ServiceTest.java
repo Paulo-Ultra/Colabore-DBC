@@ -22,8 +22,7 @@ import java.net.URL;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ContextConfiguration(classes = {S3Service.class})
 @RunWith(MockitoJUnitRunner.class)
@@ -58,7 +57,7 @@ public class S3ServiceTest {
     }
 
     @Test
-    public void deveTestarUploadFileComSucesso() throws AmazonS3Exception {
+    public void deveTestarUploadFileComSucesso() throws AmazonS3Exception, IOException {
 
         doReturn(null).when(amazonS3).putObject(any(), any(), any(), any());
         when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
@@ -66,13 +65,26 @@ public class S3ServiceTest {
         assertNotNull(uri);
     }
 
-    @Test(expected = IOException.class)
-    public void deveTestarUploadFileComException() throws AmazonS3Exception, IOException {
+//    @Test(expected = IOException.class)
+//    public void deveTestarUploadFileComIOException() throws AmazonS3Exception, IOException {
+//
+//        doReturn(null).when(amazonS3).putObject(any(), any(), any(), any());
+//        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
+////        when(mockMultipartFile.getInputStream()).thenThrow(IOException.class);
+//        URI uri = s3Service.uploadFile(mockMultipartFile);
+//        assertNotNull(uri);
+//    }
+//
+    @Test(expected = AmazonS3Exception.class)
+    public void deveTestarUploadFileComURIException() throws AmazonS3Exception, IOException {
 
+        URL url = new URL("http://www.javacodegeeks.com");
         doReturn(null).when(amazonS3).putObject(any(), any(), any(), any());
-        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(url);
-//        when(mockMultipartFile.getInputStream()).thenThrow(IOException.class);
-        URI uri = s3Service.uploadFile(mockMultipartFile);
-        assertNotNull(uri);
+        when(amazonS3.getUrl(anyString(), anyString())).thenReturn(new URL(
+                "https",
+                "stackoverflow .com",
+                80, "pages/page1.html"
+        ));
+        s3Service.uploadFile(mockMultipartFile);
     }
 }

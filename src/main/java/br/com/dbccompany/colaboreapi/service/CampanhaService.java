@@ -3,6 +3,7 @@ package br.com.dbccompany.colaboreapi.service;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.DoadorCampanhaDTO;
+import br.com.dbccompany.colaboreapi.dto.tag.TagCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
 import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
@@ -13,12 +14,14 @@ import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.LocalDateTime;
@@ -59,32 +62,36 @@ public class CampanhaService {
             campanhaEntity.setArrecadacao(BigDecimal.valueOf(0));
         }
 
-        Set<TagEntity> tagEntitySet = campanhaDTO.getTags().stream()
+        Set<TagCreateDTO> tagDTOS = campanhaDTO.getTags().stream()
                 .map(tagDTO -> {
+                    TagCreateDTO tagCreateDTO = new TagCreateDTO();
                     try {
-                        return tagService.findById(tagDTO.getIdTag());
+                        tagCreateDTO = tagService.adicionar(tagCreateDTO);
                     } catch (RegraDeNegocioException e) {
                         throw new RuntimeException(e);
                     }
+                    return tagCreateDTO;
                 })
                 .collect(Collectors.toSet());
 
+        Set<TagEntity> tagEntities = objectMapper.convertValue(tagDTOS, (JavaType) Set.of(TagEntity.class));
+
         campanhaEntity.setUsuario(usuarioEntity);
         campanhaEntity.setIdUsuario(usuarioService.getIdLoggedUser());
-        campanhaEntity.setTagEntities(tagEntitySet);
+        campanhaEntity.setTagEntities(tagEntities);
         campanhaEntity.setStatusMeta(false);
         campanhaEntity.setUltimaAlteracao(LocalDateTime.now());
         if(campanhaEntity.getDataLimite().isBefore(LocalDateTime.now()) || campanhaEntity.getDataLimite().isEqual(LocalDateTime.now())){
             throw new CampanhaException("A campanha deve ser criada com uma data posterior a de hoje");
         }
 
-            campanhaDTO = retornarDTO(campanhaRepository.save(campanhaEntity));
+        campanhaDTO = retornarDTO(campanhaRepository.save(campanhaEntity));
         campanhaDTO.setTags(objectMapper.convertValue(campanhaEntity.getTagEntities(), Set.class));
 
         return campanhaDTO;
     }
 
-    public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException {
+    public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
         URI uri = s3Service.uploadFile(multipartFile);
         campanhaEntity.setFotoCampanha(uri.toString());

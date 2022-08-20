@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import java.io.IOException;
+
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
@@ -82,7 +84,7 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException {
+    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
         usuarioService.adicionarFoto(multipartFile);
         return ResponseEntity.ok().build();
     }

@@ -32,6 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -222,7 +223,7 @@ public class CampanhaServiceTest {
     }
 
     @Test
-    public void deveTestarAdicionarFotoComSucesso() throws AmazonS3Exception, CampanhaException {
+    public void deveTestarAdicionarFotoComSucesso() throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = getCampanhaEntityStatusEncerrada();
 
         final MultipartFile mockFile = mock(MultipartFile.class);
