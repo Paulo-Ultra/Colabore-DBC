@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
 
@@ -84,7 +85,7 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
+    public ResponseEntity<Void> criarFotoUsuario(@Valid @NotNull @ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
         usuarioService.adicionarFoto(multipartFile);
         return ResponseEntity.ok().build();
     }

@@ -22,18 +22,24 @@ public class TagService {
 
     private final ObjectMapper objectMapper;
 
-    public TagEntity adicionar(TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
+    public TagEntity adicionar(TagCreateDTO tagCreateDTO) {
 
         tagCreateDTO.setNomeTag(tagCreateDTO.getNomeTag().toLowerCase());
 
-        Integer verificaExistenciaTag = tagRepository.findByNomeTagCount(tagCreateDTO.getNomeTag());
+        try {
+            Integer verificaExistenciaTag = tagRepository.findByNomeTagCount(tagCreateDTO.getNomeTag());
 
-        if(verificaExistenciaTag > 0 ){
-            throw new RegraDeNegocioException("Esta tag já existe!");
+            if(verificaExistenciaTag > 0 ){
+                throw new RegraDeNegocioException("Esta tag já existe!");
+            }
+
+            if(tagCreateDTO.getNomeTag().isBlank() || tagCreateDTO.getNomeTag().isEmpty() ){
+                throw new RegraDeNegocioException("Nome da tag não pode ser nula ou vazia");
+            }
+        } catch (RegraDeNegocioException e) {
+            e.getMessage();
         }
-        if(tagCreateDTO.getNomeTag().isBlank() || tagCreateDTO.getNomeTag().isEmpty() ){
-            throw new RegraDeNegocioException("Nome da tag não pode ser nula ou vazia");
-        }
+
         TagEntity tagEntity = objectMapper.convertValue(tagCreateDTO, TagEntity.class);
         TagEntity novaTag = tagRepository.save(tagEntity);
         return novaTag;
