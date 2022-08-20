@@ -123,21 +123,12 @@ public class CampanhaServiceTest {
 
         when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
         when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
-        when(tagRepository.findByNomeTagCount("livros")).thenReturn(1);
+//        when(tagRepository.findByNomeTagCount("livros")).thenReturn(1);
         when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
 
         campanhaService.adicionar(campanhaDTO);
 
         assertNotNull(campanhaDTO);
-       /* assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO2.getIdCampanha());
-        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO2.getArrecadacao());
-        assertEquals(campanhaEntity.getMeta(), campanhaDTO2.getMeta());
-        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO2.getFotoCampanha());
-        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO2.getEncerrarAutomaticamente());
-        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO2.getDataLimite());
-        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO2.getStatusMeta());
-        assertEquals(campanhaEntity.getDescricao(), campanhaDTO2.getDescricao());
-        assertEquals(campanhaEntity.getTitulo(), campanhaDTO2.getTitulo());*/
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -146,11 +137,6 @@ public class CampanhaServiceTest {
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
         TagEntity tagEntity = getTagEntity();
         CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
-
-
-        when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
-        when(tagService.findById(anyInt())).thenReturn(tagEntity);
 
         campanhaDTO.setMeta(new BigDecimal(0));
         campanhaDTO.setArrecadacao(new BigDecimal(50));
@@ -183,8 +169,6 @@ public class CampanhaServiceTest {
         campanhaDTO.setDataLimite(LocalDateTime.now());
 
         when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
-        when(tagService.findById(anyInt())).thenReturn(tagEntity);
 
         TagDTO tagDTO = new TagDTO();
         tagDTO.setNomeTag("oi");
@@ -208,22 +192,6 @@ public class CampanhaServiceTest {
     @Test
     public void deveTestarCreateSemSucessoSet() throws RegraDeNegocioException, CampanhaException {
 
-        /*UsuarioEntity usuarioEntity = getUsuarioEntity();
-        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
-
-        TagEntity tagEntity = new TagEntity();
-        tagEntity.setNomeTag("livros");
-
-        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
-
-        TagCreateDTO tagCreateDTO = new TagCreateDTO();
-        tagCreateDTO.setNomeTag("livros");
-
-        Set<String> stringSet = Set.of("livros","oi","uashaushuah");
-
-        campanhaDTO.setTags(stringSet);
-
-        tagEntity.setNomeTag("livros");*/
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
 
@@ -242,11 +210,9 @@ public class CampanhaServiceTest {
         campanhaEntity.setUsuario(usuarioEntity);
         campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());
 
-        //when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
+
         when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
-        when(tagService.findByNomeTag(String.valueOf(String.class))).thenReturn(Optional.of(tagEntity));
         when(tagService.adicionar(tagCreateDTO)).thenReturn(tagEntity);
-        when(tagRepository.findByNomeTagCount("teste")).thenReturn(null);
         when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
 
         CampanhaDTO campanhaDTO2 = campanhaService.adicionar(campanhaDTO);
@@ -271,83 +237,6 @@ public class CampanhaServiceTest {
 
     @Test()
     public void deveTestarEditComSucesso() throws RegraDeNegocioException, CampanhaException {
-//        UsuarioEntity usuarioEntity = getUsuarioEntity();
-//        CampanhaEntity campanhaEntity = getCampanhaEntitySemDoacao();
-//        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
-//        TagEntity tagEntity = new TagEntity();
-//
-//        Set<String> tag = Set.of("livros");
-//
-//        campanhaDTO.setTags(tag);
-
-        /*UsuarioEntity usuarioEntity = getUsuarioEntity();
-        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
-
-        TagEntity tagEntity = new TagEntity();
-        tagEntity.setNomeTag("livros");
-
-        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
-
-        TagCreateDTO tagCreateDTO = new TagCreateDTO();
-        tagCreateDTO.setNomeTag("livros");
-
-        Set<String> stringSet = Set.of("livros");
-
-        campanhaDTO.setTags(stringSet);
-        campanhaDTO.setArrecadacao(null);
-        campanhaEntity.setUsuario(usuarioEntity);
-        campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());*/
-
-
-//        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
-//        when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
-//        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
-//        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
-//        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
-//        when(tagService.findById(anyInt())).thenReturn(tagEntity);
-        UsuarioEntity usuarioEntity = getUsuarioEntity();
-        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
-
-        TagEntity tagEntity = new TagEntity();
-        tagEntity.setNomeTag("livros");
-
-        CampanhaDTO campanhaDTO = getCampanhaDTOStatusEncerrada();
-
-        TagCreateDTO tagCreateDTO = new TagCreateDTO();
-        tagCreateDTO.setNomeTag("livros");
-
-        Set<String> stringSet = Set.of("livros");
-
-        campanhaDTO.setTags(stringSet);
-        campanhaDTO.setArrecadacao(null);
-        campanhaDTO.setDoacoes(null);
-        campanhaEntity.setDoadores(null);
-        campanhaEntity.setUsuario(usuarioEntity);
-        campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());
-
-        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
-        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
-        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
-        when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
-        when(tagRepository.findByNomeTagCount("livros")).thenReturn(1);
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
-
-        CampanhaDTO campanhaDTO2 = campanhaService.editar(1, campanhaDTO);
-
-//        assertNotNull(campanhaDTO);
-//        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
-//        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
-//        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
-//        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
-//        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
-//        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
-//        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
-//        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
-//        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
-    }
-
-    @Test()
-    public void deveTestarEditComSucessoElse() throws RegraDeNegocioException, CampanhaException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityNaoEncerraAutomatico();
         TagEntity tagEntity = new TagEntity();
@@ -365,7 +254,23 @@ public class CampanhaServiceTest {
 
         campanhaDTO.setTags(tag);
 
-        /*UsuarioEntity usuarioEntity = getUsuarioEntity();
+        campanhaEntity.setTagEntities(tagEntitySet);
+
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
+
+        CampanhaDTO campanhaDTO2 = campanhaService.editar(1, campanhaDTO);
+
+        assertNotNull(campanhaDTO2);
+    }
+
+    @Test
+    public void deveTestarCreateSemSucessoSetEdit() throws RegraDeNegocioException, CampanhaException {
+
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
 
         TagEntity tagEntity = new TagEntity();
@@ -381,28 +286,19 @@ public class CampanhaServiceTest {
         campanhaDTO.setTags(stringSet);
         campanhaDTO.setArrecadacao(null);
         campanhaEntity.setUsuario(usuarioEntity);
-        campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());*/
-        campanhaEntity.setTagEntities(tagEntitySet);
+        campanhaEntity.setIdUsuario(usuarioEntity.getIdUsuario());
+        campanhaEntity.setArrecadacao(new BigDecimal(0));
 
         when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
-        when(tagService.findByNomeTag("livros")).thenReturn(Optional.of(tagEntity));
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
         when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
-        when(tagService.findById(anyInt())).thenReturn(tagEntity);
+        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
+        when(tagService.adicionar(tagCreateDTO)).thenReturn(tagEntity);
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
 
         CampanhaDTO campanhaDTO2 = campanhaService.editar(1, campanhaDTO);
 
-//        assertNotNull(campanhaDTO);
-//        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
-//        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
-//        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
-//        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
-//        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
-//        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
-//        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
-//        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
-//        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
+        assertNotNull(campanhaDTO2);
     }
 
     @Test(expected = RegraDeNegocioException.class)
@@ -414,11 +310,7 @@ public class CampanhaServiceTest {
 
         campanhaDTO.setArrecadacao(new BigDecimal(95000));
 
-
-        when(usuarioService.getLoggedUser()).thenReturn(usuarioEntity);
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
-        when(tagService.findById(anyInt())).thenReturn(tagEntity);
 
         campanhaService.editar(1, campanhaDTO);
     }
@@ -452,10 +344,9 @@ public class CampanhaServiceTest {
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
 
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
-        when(usuarioService.getLoggedUser()).thenReturn(getUsuarioEntity());
-        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
         when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
+
         campanhaService.deletar(campanhaEntity.getIdCampanha());
     }
 
@@ -466,10 +357,6 @@ public class CampanhaServiceTest {
         List<Integer> idTags = List.of(1);
         Integer idUsuario = 1;
         List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
-
-        if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
-            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
-        }
 
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
@@ -484,10 +371,6 @@ public class CampanhaServiceTest {
         Integer idUsuario = 1;
         List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
 
-        if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
-            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
-        }
-
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
         assertNotNull(resultado);
@@ -501,11 +384,6 @@ public class CampanhaServiceTest {
         Integer idUsuario = 1;
         DoadorEntity doadorEntity = getDoadorEntity();
         List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
-
-
-        if (tipoFiltro.equals(TipoFiltro.TODAS)) {
-            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
-        }
 
         List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
 
