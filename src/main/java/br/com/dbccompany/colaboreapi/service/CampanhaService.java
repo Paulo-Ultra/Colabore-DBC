@@ -94,7 +94,7 @@ public class CampanhaService {
     }
 
     public CampanhaDTO editar(Integer id,
-                              CampanhaCreateDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaException {
+                              CampanhaDTO campanhaDTO) throws RegraDeNegocioException, CampanhaException {
 
         CampanhaEntity campanhaRecuperada = buscarIdCampanha(id);
 
@@ -104,11 +104,27 @@ public class CampanhaService {
 
         UsuarioEntity usuarioCampanha = usuarioService.getLoggedUser();
 
-        validaAlteracoes(campanhaCreateDTO, campanhaRecuperada);
+        validaAlteracoes(campanhaDTO, campanhaRecuperada);
+
+        Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
+                .map(tagString -> {
+                    Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
+                    if(nomeTag.isPresent()){
+                        return nomeTag.get();
+                    }
+                    else {
+                        try {
+                            return tagService.adicionar(new TagCreateDTO(tagString));
+                        } catch (RegraDeNegocioException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                })
+                .collect(Collectors.toSet());
 
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
-
+        campanhaRecuperada.setTagEntities(tagEntities);
         verificaCriadorDaCampanha(id);
 
         return getCampanhaByIdDTO(campanhaRepository.save(campanhaRecuperada));
