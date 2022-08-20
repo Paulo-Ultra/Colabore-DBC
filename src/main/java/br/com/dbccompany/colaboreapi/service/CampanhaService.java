@@ -113,11 +113,7 @@ public class CampanhaService {
                         return nomeTag.get();
                     }
                     else {
-                        try {
-                            return tagService.adicionar(new TagCreateDTO(tagString));
-                        } catch (RegraDeNegocioException e) {
-                            throw new RuntimeException(e);
-                        }
+                        return tagService.adicionar(new TagCreateDTO(tagString));
                     }
                 })
                 .collect(Collectors.toSet());
