@@ -55,8 +55,8 @@ public class CampanhaController {
 
     @PutMapping("/{idCampanha}")
     public ResponseEntity<CampanhaDTO> editar(@PathVariable("idCampanha") Integer idCampanha,
-                                              @Valid @RequestBody CampanhaCreateDTO campanhaCreateDTO) throws CampanhaException, RegraDeNegocioException {
-        return new ResponseEntity<>(campanhaService.editar(idCampanha, campanhaCreateDTO), HttpStatus.OK);
+                                              @Valid @RequestBody CampanhaDTO campanhaDTO) throws CampanhaException, RegraDeNegocioException {
+        return new ResponseEntity<>(campanhaService.editar(idCampanha, campanhaDTO), HttpStatus.OK);
     }
 
     @Operation(summary = "realiza a deleção da campanha do usuário logado", description = "delete de campanha pelo identificador no banco de dados")
