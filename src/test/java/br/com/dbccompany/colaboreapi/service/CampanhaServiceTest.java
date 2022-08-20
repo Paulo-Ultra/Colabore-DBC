@@ -289,10 +289,25 @@ public class CampanhaServiceTest {
 
     @Test
     public void deveTestarListaDeCampanhasByUsuarioLogado() {
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
 
-        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(getCampanhaEntitySemDoacao()));
+        when(campanhaRepository.findAllByIdUsuario(anyInt())).thenReturn(List.of(getCampanhaEntitySemDoacao()));
+        when(usuarioService.getIdLoggedUser()).thenReturn(usuarioEntity.getIdUsuario());
 
-        List<CampanhaDTO> campanhaDTOS = campanhaService.listaDeCampanhasByUsuarioLogado();
+        List<CampanhaDTO> campanhaDTOList = campanhaService.listaDeCampanhasByUsuarioLogado();
+        assertNotNull(campanhaDTOList);
+    }
+
+    @Test
+    public void deveTestarDeleteComSucesso() throws CampanhaException, RegraDeNegocioException {
+        CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
+
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(usuarioService.getLoggedUser()).thenReturn(getUsuarioEntity());
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(campanhaRepository.findAllByIdUsuarioAndIdCampanha(anyInt(), anyInt())).thenReturn(List.of(campanhaEntity));
+        campanhaService.deletar(campanhaEntity.getIdCampanha());
     }
 
     public static UsuarioEntity getUsuarioEntity() {

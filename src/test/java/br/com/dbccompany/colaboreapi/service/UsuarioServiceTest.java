@@ -139,21 +139,6 @@ public class UsuarioServiceTest {
         assertEquals("Teste", usuarioEntity.getNome());
     }
 
-//    @Test(expected = RegraDeNegocioException.class)
-//    public void deveTestarGetLoggedUserComException() throws RegraDeNegocioException {
-//        UsuarioEntity usuarioEntity = getUsuarioEntity();
-//        deveTestarGetIdLoggedUser();
-//        usuarioEntity.setIdUsuario(100);
-//
-//        when(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuarioEntity));
-//
-//        usuarioService.getLoggedUser();
-//
-//        assertNotNull(usuarioEntity);
-//        assertEquals("teste@dbccompany.com.br", usuarioEntity.getEmail());
-//        assertEquals("Teste", usuarioEntity.getNome());
-//    }
-
     @Test
     public void deveTestarRetornarUsuarioLogado() throws RegraDeNegocioException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();
