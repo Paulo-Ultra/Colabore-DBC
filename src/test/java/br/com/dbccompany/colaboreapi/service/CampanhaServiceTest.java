@@ -7,6 +7,7 @@ import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.DoadorEntity;
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
+import br.com.dbccompany.colaboreapi.enums.TipoFiltro;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
@@ -294,6 +295,60 @@ public class CampanhaServiceTest {
 
         List<CampanhaDTO> campanhaDTOS = campanhaService.listaDeCampanhasByUsuarioLogado();
     }
+
+    @Test
+    public void deveTestarListarCampanhaComSucessoMetaAtingida() {
+        TipoFiltro tipoFiltro = TipoFiltro.META_ATINGIDA;
+        Boolean minhasContribuicoes = false, minhasCampanhas = false;
+        List<Integer> idTags = List.of(1);
+        Integer idUsuario = 1;
+        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
+
+        if (tipoFiltro.equals(TipoFiltro.META_ATINGIDA)) {
+            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
+        }
+
+        List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void deveTestarListarCampanhaComSucessoMetaNaoAtingida() {
+        TipoFiltro tipoFiltro = TipoFiltro.META_NAO_ATINGIDA;
+        Boolean minhasContribuicoes = false, minhasCampanhas = false;
+        List<Integer> idTags = List.of(1);
+        Integer idUsuario = 1;
+        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
+
+        if (tipoFiltro.equals(TipoFiltro.META_NAO_ATINGIDA)) {
+            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
+        }
+
+        List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
+
+        assertNotNull(resultado);
+    }
+
+    @Test
+    public void deveTestarListarCampanhaComSucessoTodas() {
+        TipoFiltro tipoFiltro = TipoFiltro.TODAS;
+        Boolean minhasContribuicoes = false, minhasCampanhas = false;
+        List<Integer> idTags = List.of(1);
+        Integer idUsuario = 1;
+        DoadorEntity doadorEntity = getDoadorEntity();
+        List<CampanhaEntity> campanhaEntityList = List.of(getCampanhaEntityNaoEncerraAutomatico());
+
+
+        if (tipoFiltro.equals(TipoFiltro.TODAS)) {
+            when(campanhaRepository.findAll(false, idUsuario, idTags, minhasContribuicoes, minhasCampanhas)).thenReturn(campanhaEntityList);
+        }
+
+        List<CampanhaDTO> resultado = campanhaService.listarCampanha(tipoFiltro,minhasContribuicoes,minhasCampanhas,idTags);
+
+        assertNotNull(resultado);
+    }
+
 
     public static UsuarioEntity getUsuarioEntity() {
         UsuarioEntity usuarioEntity = new UsuarioEntity();
