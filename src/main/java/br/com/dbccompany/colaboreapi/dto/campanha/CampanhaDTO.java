@@ -15,11 +15,11 @@ public class CampanhaDTO extends CampanhaCreateDTO {
     private Integer idCampanha;
 
     @Schema(description = "Nome do usuário")
+    @NotEmpty
     private String nome;
 
     @Schema(hidden = true)
     private List<DoadorCampanhaDTO> doacoes;
 
-    @NotEmpty
     private Set<String> tags;
 }
