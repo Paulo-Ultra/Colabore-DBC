@@ -62,24 +62,15 @@ public class CampanhaService {
         if(campanhaEntity.getDataLimite().isBefore(LocalDateTime.now()) || campanhaEntity.getDataLimite().isEqual(LocalDateTime.now())){
             throw new CampanhaException("A campanha deve ser criada com uma data posterior a de hoje");
         }
-//todo generalizar código
-        Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
-                .map(tagString -> {
-                    Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
-                    if(nomeTag.isPresent()){
-                        return nomeTag.get();
-                    }
-                    else {
-                        return tagService.adicionar(new TagCreateDTO(tagString));
-                    }
-                })
-                .collect(Collectors.toSet());
 
+        Set<TagEntity> tagEntities = getTagEntitiesByNome(campanhaDTO);
         campanhaEntity.setTagEntities(tagEntities);
         campanhaRepository.save(campanhaEntity);
         CampanhaDTO campanhaDTO1 = getCampanhaByIdDTO(campanhaEntity);
         return campanhaDTO1;
     }
+
+
 
     public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
@@ -101,17 +92,7 @@ public class CampanhaService {
 
         validaAlteracoes(campanhaDTO, campanhaRecuperada);
 
-        Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
-                .map(tagString -> {
-                    Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
-                    if(nomeTag.isPresent()){
-                        return nomeTag.get();
-                    }
-                    else {
-                        return tagService.adicionar(new TagCreateDTO(tagString));
-                    }
-                })
-                .collect(Collectors.toSet());
+        Set<TagEntity> tagEntities = getTagEntitiesByNome(campanhaDTO);
 
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
@@ -197,6 +178,21 @@ public class CampanhaService {
         campanhaEntity.setMeta(campanhaCreateDTO.getMeta());
         campanhaEntity.setDescricao(campanhaCreateDTO.getDescricao());
         campanhaEntity.setTitulo(campanhaCreateDTO.getTitulo());
+    }
+
+    private Set<TagEntity> getTagEntitiesByNome(CampanhaDTO campanhaDTO) {
+        Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
+                .map(tagString -> {
+                    Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
+                    if(nomeTag.isPresent()){
+                        return nomeTag.get();
+                    }
+                    else {
+                        return tagService.adicionar(new TagCreateDTO(tagString));
+                    }
+                })
+                .collect(Collectors.toSet());
+        return tagEntities;
     }
 
 }

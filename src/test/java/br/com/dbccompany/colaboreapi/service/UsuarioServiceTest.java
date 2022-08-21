@@ -3,10 +3,8 @@ package br.com.dbccompany.colaboreapi.service;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
-import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
-import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
@@ -28,11 +26,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 
