@@ -15,6 +15,86 @@ O objetivo do projeto é permitir que os colaboradores da DBC possam participar 
 <p>Por tratar-se de uma API Rest ela estabelece uma comunicação stateless entre cliente e servidor. Isso significa que nenhuma informação do cliente é armazenada entre solicitações GET e todas as solicitações são separadas e desconectadas.</p>
 <h2>Diagrama de Entidade Relacionamento</h2>
 <img src="https://user-images.githubusercontent.com/92181625/185804429-f437b2ec-151e-4028-a599-79829f27969c.png">
+
+<h2>📁 Diretórios e arquivos</h2>
+
+```
+.
+├───.mvn
+│   └───wrapper
+├───Colabore-API
+│   └───.idea
+│       └───libraries
+├───src
+│   ├───main
+│   │   ├───java
+│   │   │   └───br
+│   │   │       └───com
+│   │   │           └───dbccompany
+│   │   │               └───colaboreapi
+│   │   │                   ├───config
+│   │   │                   ├───controller
+│   │   │                   ├───dto
+│   │   │                   │   ├───autenticacao
+│   │   │                   │   ├───campanha
+│   │   │                   │   ├───doador
+│   │   │                   │   ├───tag
+│   │   │                   │   └───usuario
+│   │   │                   ├───entity
+│   │   │                   ├───enums
+│   │   │                   ├───exceptions
+│   │   │                   ├───repository
+│   │   │                   ├───security
+│   │   │                   └───service
+│   │   └───resources
+│   │       ├───static
+│   │       └───templates
+│   └───test
+│       └───java
+│           └───br
+│               └───com
+│                   └───dbccompany
+│                       └───colaboreapi
+│                           └───service
+└───target
+    ├───classes
+    │   └───br
+    │       └───com
+    │           └───dbccompany
+    │               └───colaboreapi
+    │                   ├───config
+    │                   ├───controller
+    │                   ├───dto
+    │                   │   ├───autenticacao
+    │                   │   ├───campanha
+    │                   │   ├───doador
+    │                   │   ├───tag
+    │                   │   └───usuario
+    │                   ├───entity
+    │                   ├───enums
+    │                   ├───exceptions
+    │                   ├───repository
+    │                   ├───security
+    │                   └───service
+    ├───generated-sources
+    │   └───annotations
+    ├───generated-test-sources
+    │   └───test-annotations
+    ├───maven-archiver
+    ├───maven-status
+    │   └───maven-compiler-plugin
+    │       ├───compile
+    │       │   └───default-compile
+    │       └───testCompile
+    │           └───default-testCompile
+    └───test-classes
+        └───br
+            └───com
+                └───dbccompany
+                    └───colaboreapi
+                        └───service
+
+```
 <h2>Gostaria de Falar Conosco?</h2>
 <address>
 Clique no nome dos desenvolvedores para enviar um e-mail
