@@ -76,8 +76,8 @@ public class CampanhaService {
                 .collect(Collectors.toSet());
 
         campanhaEntity.setTagEntities(tagEntities);
-        CampanhaDTO campanhaDTO1 = getCampanhaByIdDTO(campanhaEntity);
         campanhaRepository.save(campanhaEntity);
+        CampanhaDTO campanhaDTO1 = getCampanhaByIdDTO(campanhaEntity);
         return campanhaDTO1;
     }
 

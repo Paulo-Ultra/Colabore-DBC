@@ -3,8 +3,6 @@ package br.com.dbccompany.colaboreapi.dto.campanha;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -14,8 +12,7 @@ public class CampanhaDTO extends CampanhaCreateDTO {
     @Schema(description = "Identificador do usuário", hidden = true)
     private Integer idCampanha;
 
-    @Schema(description = "Nome do usuário")
-    @NotNull
+    @Schema(description = "Nome do usuário", hidden = true)
     private String nome;
 
     @Schema(hidden = true)
