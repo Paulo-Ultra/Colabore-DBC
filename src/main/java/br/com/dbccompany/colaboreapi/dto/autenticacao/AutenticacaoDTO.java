@@ -8,13 +8,14 @@ import javax.validation.constraints.NotEmpty;
 @Data
 public class AutenticacaoDTO {
 
-    @Schema(example = "colabore@dbccompany.com.br")
+    @Schema(description = "Email do usuário.", example = "colabore@dbccompany.com.br")
     @NotEmpty
     private String email;
 
+    @Schema(description = "Senha do usuário.")
     @NotEmpty
     private String senha;
 
-    @Schema(hidden = true)
+    @Schema(description = "Id da autenticação.", example = "1", hidden = true)
     private Integer idAutenticacao;
 }
