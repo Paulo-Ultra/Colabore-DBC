@@ -13,7 +13,7 @@ O objetivo do projeto é permitir que os colaboradores da DBC possam participar 
 <p>Esta API trabalha com chaves primarias e estrangeiras, garantindo assim a integridade de toda a aplicação.</p>
 <p>Por tratar-se de uma API Rest ela estabelece uma comunicação stateless entre cliente e servidor. Isso significa que nenhuma informação do cliente é armazenada entre solicitações GET e todas as solicitações são separadas e desconectadas.</p>
 <h2>Diagrama de Entidade Relacionamento</h2>
-<img src="https://user-images.githubusercontent.com/92181625/184516062-b7a0abf2-7752-427c-8423-cf139822f263.png">
+<img src="https://user-images.githubusercontent.com/92181625/185804429-f437b2ec-151e-4028-a599-79829f27969c.png">
 <h2>Gostaria de Falar Conosco?</h2>
 <address>
 Clique no nome dos desenvolvedores para enviar um e-mail
