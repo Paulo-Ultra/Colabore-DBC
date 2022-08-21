@@ -33,8 +33,12 @@ public class UsuarioService {
     public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
 
         UsuarioEntity usuarioEntity = getLoggedUser();
-        URI uri = s3Service.uploadFile(multipartFile);
-        usuarioEntity.setFoto(uri.toString());
+        if(multipartFile != null) {
+            URI uri = s3Service.uploadFile(multipartFile);
+            usuarioEntity.setFoto(uri.toString());
+        } else {
+            usuarioEntity.setFoto(null);
+        }
         usuarioRepository.save(usuarioEntity);
     }
     public UsuarioDTO adicionar(UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {

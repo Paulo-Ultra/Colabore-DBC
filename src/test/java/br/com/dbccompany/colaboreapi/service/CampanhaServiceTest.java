@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.service;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
@@ -13,9 +12,6 @@ import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
-import br.com.dbccompany.colaboreapi.repository.TagRepository;
-import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
-import com.amazonaws.services.s3.AmazonS3;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

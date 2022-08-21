@@ -3,9 +3,12 @@ package br.com.dbccompany.colaboreapi.service;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioDTO;
 import br.com.dbccompany.colaboreapi.dto.usuario.UsuarioSemSenhaDTO;
+import br.com.dbccompany.colaboreapi.entity.CampanhaEntity;
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
+import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
+import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
 import br.com.dbccompany.colaboreapi.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -24,7 +28,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -44,17 +52,49 @@ public class UsuarioServiceTest {
     private UsuarioRepository usuarioRepository;
     @Mock
     private S3Service s3Service;
+    @Mock
+    private CampanhaRepository campanhaRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private MockMultipartFile mockMultipartFile;
+    private URL url;
+
+    private final String bucketName = "";
+
+
     @Before
-    public void init() {
+    public void init() throws MalformedURLException {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         ReflectionTestUtils.setField(usuarioService, "objectMapper", objectMapper);
+
+        mockMultipartFile = null;
+
+        url = new URL(
+                "https",
+                "stackoverflow.com",
+                80, "pages/page1.html");
     }
 
+
+    @Test
+    public void deveTestarAdicionarFotoNull() throws AmazonS3Exception, IOException, RegraDeNegocioException {
+
+        UsuarioEntity usuarioEntity = getUsuarioEntity();
+        deveTestarGetIdLoggedUser();
+
+        final MultipartFile mockFile = mock(MultipartFile.class);
+
+        when(usuarioRepository.findById(anyInt())).thenReturn(Optional.of(usuarioEntity));
+        when(usuarioRepository.save(any(UsuarioEntity.class))).thenReturn(usuarioEntity);
+
+        usuarioService.adicionarFoto(null);
+
+        assertNotNull(mockFile);
+
+    }
     @Test
     public void deveTestarAdicionarComSucesso() throws RegraDeNegocioException {
         UsuarioEntity usuarioEntity = getUsuarioEntity();

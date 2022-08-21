@@ -62,7 +62,7 @@ public class CampanhaService {
         if(campanhaEntity.getDataLimite().isBefore(LocalDateTime.now()) || campanhaEntity.getDataLimite().isEqual(LocalDateTime.now())){
             throw new CampanhaException("A campanha deve ser criada com uma data posterior a de hoje");
         }
-
+//todo generalizar código
         Set<TagEntity> tagEntities = campanhaDTO.getTags().stream()
                 .map(tagString -> {
                     Optional<TagEntity> nomeTag = tagService.findByNomeTag(tagString);
