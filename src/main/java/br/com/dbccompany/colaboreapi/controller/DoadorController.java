@@ -23,7 +23,7 @@ public class DoadorController {
 
     @PostMapping("/{idCampanha}")
     public ResponseEntity<DoadorDTO> adicionar(@PathVariable("idCampanha") Integer id,
-                                               @Valid @RequestBody DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException, DoacaoException, CampanhaException {
+                                               @RequestBody @Valid DoadorCreateDTO doadorCreateDTO) throws RegraDeNegocioException, DoacaoException, CampanhaException {
         return ResponseEntity.ok(doadorService.adicionar(id, doadorCreateDTO));
     }
 }
