@@ -37,7 +37,7 @@ public class AutenticacaoController {
 
     @Operation(summary = "Realiza o login de um usuário.", description = "Realiza o login de um determinado usuário gerando seu respectivo token.")
     @PostMapping("/login")
-    public String auth(@RequestBody @Valid AutenticacaoDTO autenticacaoCreateDto) throws RegraDeNegocioException {
+    public String auth(@RequestBody @Valid AutenticacaoDTO autenticacaoCreateDto) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(

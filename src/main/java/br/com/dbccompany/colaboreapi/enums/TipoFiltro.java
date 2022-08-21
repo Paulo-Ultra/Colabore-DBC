@@ -7,6 +7,4 @@ public enum TipoFiltro {
     TODAS,
     META_ATINGIDA,
     META_NAO_ATINGIDA
-
-
 }

@@ -12,7 +12,6 @@ import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
 import br.com.dbccompany.colaboreapi.exceptions.CampanhaException;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.CampanhaRepository;
-import br.com.dbccompany.colaboreapi.repository.TagRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +37,6 @@ public class CampanhaService {
     private final UsuarioService usuarioService;
     private final TagService tagService;
 
-    private final TagRepository tagRepository;
     private final CampanhaRepository campanhaRepository;
     private final S3Service s3Service;
 
@@ -69,8 +67,6 @@ public class CampanhaService {
         CampanhaDTO campanhaDTO1 = getCampanhaByIdDTO(campanhaEntity);
         return campanhaDTO1;
     }
-
-
 
     public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
@@ -194,5 +190,4 @@ public class CampanhaService {
                 .collect(Collectors.toSet());
         return tagEntities;
     }
-
 }

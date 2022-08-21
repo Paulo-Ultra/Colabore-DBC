@@ -1,8 +1,6 @@
 package br.com.dbccompany.colaboreapi.security;
 
 import br.com.dbccompany.colaboreapi.entity.UsuarioEntity;
-import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
-import br.com.dbccompany.colaboreapi.service.UsuarioService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,10 +22,10 @@ public class TokenService {
     @Value("${jwt.expiration}")
     private String expiration;
 
-    public String getToken(UsuarioEntity usuarioEntity) throws RegraDeNegocioException {
+    public String getToken(UsuarioEntity usuarioEntity) {
 
         Date now = new Date();
-        Date exp = new Date(now.getTime() + Long.valueOf(expiration)); //convertendo para long
+        Date exp = new Date(now.getTime() + Long.valueOf(expiration));
 
         String token = Jwts.builder()
                 .setIssuer("colabore-api")
@@ -37,7 +35,6 @@ public class TokenService {
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
 
-        //return TOKEN_PREFIX + token;
         return TokenAuthenticationFilter.BEARER + token;
     }
 

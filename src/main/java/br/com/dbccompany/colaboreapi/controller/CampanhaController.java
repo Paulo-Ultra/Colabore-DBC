@@ -64,7 +64,7 @@ public class CampanhaController {
 
     @Operation(summary = "Realiza a deleção da campanha do usuário logado.", description = "Delete de campanha pelo seu identificador no banco de dados.")
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteCampanha(@RequestParam Integer id) throws CampanhaException, RegraDeNegocioException {
+    public ResponseEntity<Void> deleteCampanha(@RequestParam Integer id) throws CampanhaException {
         campanhaService.deletar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -77,7 +77,7 @@ public class CampanhaController {
 
     @Operation(summary = "Realiza a listagem das campanhas através de determinados filtros.", description = "Recupera as campanhas presentes no banco de dados através de determinados filtros.")
     @GetMapping("/listarCampanhas")
-    public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas, @RequestParam(required = false) List<Integer> idTags) throws RegraDeNegocioException, CampanhaException {
+    public ResponseEntity<List<CampanhaDTO>> listarCampanha(@RequestParam TipoFiltro tipoFiltro, @RequestParam boolean minhasContribuicoes, @RequestParam boolean minhasCampanhas, @RequestParam(required = false) List<Integer> idTags) {
         return new ResponseEntity<>(campanhaService.listarCampanha(tipoFiltro, minhasContribuicoes, minhasCampanhas, idTags), HttpStatus.OK);
     }
 }
