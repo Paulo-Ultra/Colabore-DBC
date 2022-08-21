@@ -40,5 +40,4 @@ public class S3Service {
             throw new AmazonS3Exception("Erro ao salva imagem!");
         }
     }
-
 }

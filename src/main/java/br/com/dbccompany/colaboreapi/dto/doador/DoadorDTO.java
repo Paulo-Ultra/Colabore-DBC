@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class DoadorDTO extends DoadorCreateDTO {
-    @Schema(description = "Identificador da doação")
+
+    @Schema(description = "Identificador da doação.")
     private Integer idDoador;
 }

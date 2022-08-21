@@ -35,9 +35,9 @@ public class AutenticacaoController {
 
     private final UsuarioService usuarioService;
 
-    @Operation(summary = "Realiza o login de um usuário", description = "Realiza o login de um determinado usuário gerando seu respectivo token")
+    @Operation(summary = "Realiza o login de um usuário.", description = "Realiza o login de um determinado usuário gerando seu respectivo token.")
     @PostMapping("/login")
-    public String auth(@RequestBody @Valid AutenticacaoDTO autenticacaoCreateDto) throws RegraDeNegocioException {
+    public String auth(@RequestBody @Valid AutenticacaoDTO autenticacaoCreateDto) {
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(
@@ -55,7 +55,7 @@ public class AutenticacaoController {
         return token;
     }
 
-    @Operation(summary = "realiza a listagem de todas as campanhas", description = "lista de todas as campanhas no banco de dados")
+    @Operation(summary = "Realiza o cadastro do usuário.", description = "Realiza o cadastro de um usuário dentro do banco de dados.")
     @PostMapping("/cadastrar")
     public String criarUsuario(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {
 
@@ -77,6 +77,7 @@ public class AutenticacaoController {
         return token;
     }
 
+    @Operation(summary = "Cadastra a foto do usuário.", description = "Realiza o cadastro da foto do usuário dentro do banco de dados.")
     @RequestMapping(
             path = "/cadastrarFoto",
             method = POST,
