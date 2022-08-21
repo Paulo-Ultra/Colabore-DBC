@@ -23,6 +23,7 @@ public class DoadorCampanhaDTO {
     @NotNull
     private String nome;
 
+    @Schema(description = "Foto do doador")
     private String foto;
 
 }
