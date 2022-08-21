@@ -1,6 +1,5 @@
 package br.com.dbccompany.colaboreapi.controller;
 
-import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.campanha.CampanhaDTO;
 import br.com.dbccompany.colaboreapi.enums.TipoFiltro;
 import br.com.dbccompany.colaboreapi.exceptions.AmazonS3Exception;
