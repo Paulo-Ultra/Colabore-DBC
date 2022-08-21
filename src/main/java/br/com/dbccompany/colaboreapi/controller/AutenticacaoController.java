@@ -84,7 +84,7 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute @Valid MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
+    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute @Valid @NotNull MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
         usuarioService.adicionarFoto(multipartFile);
         return ResponseEntity.ok().build();
     }
