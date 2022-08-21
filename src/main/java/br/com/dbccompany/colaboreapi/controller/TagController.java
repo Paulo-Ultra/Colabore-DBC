@@ -35,7 +35,7 @@ public class TagController {
         return tagDTOS;
     }
 
-    @Operation(summary = "Deleta uma tag.", description = "Deleta uma tag do banco de dados através de seu id")
+    @Operation(summary = "Deleta uma tag.", description = "Deleta uma tag no banco de dados através de seu id")
     @DeleteMapping("/{id}")
     public void delete(@PathVariable("id") Integer id) throws RegraDeNegocioException {
         tagService.delete(id);
