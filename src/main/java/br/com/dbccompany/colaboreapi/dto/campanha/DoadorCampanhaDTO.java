@@ -9,21 +9,21 @@ import java.math.BigDecimal;
 @Data
 public class DoadorCampanhaDTO {
 
-    @Schema(description = "Identificador da doação")
+    @Schema(description = "Identificador da doação.")
     private Integer idDoador;
 
-    @Schema(description = "Identificador do usuário", hidden = true)
+    @Schema(description = "Identificador do usuário.", hidden = true)
     private Integer idUsuario;
 
-    @Schema(description = "Valor total doado")
+    @Schema(description = "Valor total doado.")
     @NotNull
     private BigDecimal valor;
 
-    @Schema(description = "Nome do usuário")
+    @Schema(description = "Nome do usuário.")
     @NotNull
     private String nome;
 
-    @Schema(description = "Foto do doador")
+    @Schema(description = "Foto do doador.")
     private String foto;
 
 }

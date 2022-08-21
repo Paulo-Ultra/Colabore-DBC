@@ -9,11 +9,11 @@ import java.math.BigDecimal;
 @Data
 public class DoadorCreateDTO {
 
-    @Schema(description = "Identificador do usuário", hidden = true)
+    @Schema(description = "Identificador do usuário.", hidden = true)
     private Integer idUsuario;
 
     @NotNull
-    @Schema(description = "Valor total doado", example = "500")
+    @Schema(description = "Valor total doado.", example = "500")
     private BigDecimal valor;
 
 }

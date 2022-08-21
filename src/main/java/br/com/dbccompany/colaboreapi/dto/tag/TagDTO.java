@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 public class TagDTO extends TagCreateDTO {
 
-    @Schema(description = "Identificador de tag da campanha")
+    @Schema(description = "Identificador de tag da campanha.")
     private Integer idTag;
 }

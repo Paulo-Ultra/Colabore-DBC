@@ -10,21 +10,21 @@ import java.time.LocalDateTime;
 @Data
 public class CampanhaCreateDTO {
 
-    @Schema(description = "Id do usuário.", example = "1", hidden = true)
+    @Schema(description = "Id do usuário.", hidden = true)
     private Integer idUsuario;
 
-    @Schema(description = "Meta de arrecadação da campanha", example = "15400")
+    @Schema(description = "Meta de arrecadação da campanha.", example = "15400")
     @NotNull
     private BigDecimal meta;
 
-    @Schema(description = "Arrecadação da campanha", hidden = true)
+    @Schema(description = "Arrecadação da campanha.", hidden = true)
     private BigDecimal arrecadacao;
 
-    @Schema(description = "Título da campanha", example = "Páscoa Solidária")
+    @Schema(description = "Título da campanha.", example = "Páscoa Solidária")
     @NotNull
     private String titulo;
 
-    @Schema(description = "Descrição da campanha", example = "Arrecadação para próxima Páscoa Solidária DBC")
+    @Schema(description = "Descrição da campanha.", example = "Arrecadação para próxima Páscoa Solidária DBC")
     @NotNull
     private String descricao;
 
@@ -32,16 +32,16 @@ public class CampanhaCreateDTO {
     @NotNull
     private Boolean encerrarAutomaticamente;
 
-    @Schema(description = "Situação de atingimento de arrecadação da campanha", hidden = true)
+    @Schema(description = "Situação de atingimento de arrecadação da campanha.", hidden = true)
     private Boolean statusMeta;
 
-    @Schema(description = "Data em que se encerra a campanha")
+    @Schema(description = "Data em que se encerra a campanha.")
     @NotNull
     private LocalDateTime dataLimite;
 
-    @Schema(description = "Data e hora da última arrecadação da campanha", hidden = true)
+    @Schema(description = "Data e hora da última arrecadação da campanha.", hidden = true)
     private LocalDateTime ultimaAlteracao;
 
-    @Schema(description = "Capa da campanha", hidden = true)
+    @Schema(description = "Capa da campanha.", hidden = true)
     private String fotoCampanha;
 }
