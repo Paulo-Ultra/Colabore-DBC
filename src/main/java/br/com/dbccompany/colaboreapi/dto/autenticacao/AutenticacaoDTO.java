@@ -16,6 +16,6 @@ public class AutenticacaoDTO {
     @NotEmpty
     private String senha;
 
-    @Schema(description = "Id da autenticação.", example = "1", hidden = true)
+    @Schema(description = "Id da autenticação.", hidden = true)
     private Integer idAutenticacao;
 }
