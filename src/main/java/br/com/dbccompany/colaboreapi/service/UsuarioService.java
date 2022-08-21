@@ -31,7 +31,6 @@ public class UsuarioService {
 
     private final S3Service s3Service;
 
-    @NotNull
     public void adicionarFoto(MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
 
         UsuarioEntity usuarioEntity = getLoggedUser();
