@@ -10,25 +10,25 @@ import java.time.LocalDateTime;
 @Data
 public class CampanhaCreateDTO {
 
-    @Schema(hidden = true)
+    @Schema(description = "Id do usuário.", example = "1", hidden = true)
     private Integer idUsuario;
 
-    @Schema(description = "Meta de arrecadação da campanha")
+    @Schema(description = "Meta de arrecadação da campanha", example = "15400")
     @NotNull
     private BigDecimal meta;
 
     @Schema(description = "Arrecadação da campanha", hidden = true)
     private BigDecimal arrecadacao;
 
-    @Schema(description = "Título da campanha")
+    @Schema(description = "Título da campanha", example = "Páscoa Solidária")
     @NotNull
     private String titulo;
 
-    @Schema(description = "Descrição da campanha")
+    @Schema(description = "Descrição da campanha", example = "Arrecadação para próxima Páscoa Solidária DBC")
     @NotNull
     private String descricao;
 
-    @Schema(description = "Status de conclusão ou não da meta")
+    @Schema(description = "Status para identificar se a campanha será encerrada automaticamente ou não.")
     @NotNull
     private Boolean encerrarAutomaticamente;
 

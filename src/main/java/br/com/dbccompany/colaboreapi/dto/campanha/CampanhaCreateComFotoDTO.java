@@ -14,6 +14,6 @@ import javax.validation.constraints.NotNull;
 public class CampanhaCreateComFotoDTO {
 
     @NotNull
-    @Schema(description = "Foto da campanha", example = "foto.jpeg")
+    @Schema(description = "Foto da campanha")
     private MultipartFile fotoCampanha;
 }
