@@ -95,6 +95,31 @@ O objetivo do projeto é permitir que os colaboradores da DBC possam participar 
                         └───service
 
 ```
+
+<h2>💻 Endpoints </h2>
+<p> As urls interativas, construídas através do <a href="https://swagger.io/tools/swagger-ui/">Swagger</a>, podem ser acessadas neste link: <a href="https://colabore-dbc-api.herokuapp.com/swagger-ui/index.html/">API Colabore</a></p>
+
+<div align="center">
+
+| Método | URL                               | Finalidade                                        |   
+|--------|-----------------------------------|---------------------------------------------------|
+| POST   |/autenticacao/login                | Fazer login na aplicação                          |
+| POST   |/autenticacao/cadastrar            | Fazer cadastro na aplicação                       |
+| POST   |/autenticacao/cadastrarFoto        | Fazer upload da foto do usuário na aplicação      |
+| GET    |/usuario/dadosUsuario              | Lista as informações do usuário logado            |
+| POST   |/campanha/cadastrar                | Adiciona uma nova campanha                        |
+| POST   |/campanha/cadastrarFoto            | Adiciona a capa da nova campanha                  |
+| PUT    |/campanha/{idCampanha}             | Atualiza a campanha através do seu respectivo id  |
+| GET    |/campanha/listarCampanhas          | Lista as campanhas através de determinados filtros|
+| GET    |/campanha/listarCampanhasDoUsuario | Lista todas as campanhas criadas do usuário logado|
+| GET    |/campanha/campanhaPeloId           | Recupera as campanhas pelo Id                     |   
+| DELETE |/campanha/{id}                     | Deleta uma campanha através de seu respectivo id  |
+| POST   |/tag                               | Adiciona uma nova tag                             |
+| GET    |/tag                               | Lista todas a tags cadastradas                    |
+| DELETE |/tag/{id}                          | Deleta uma tag através de seu respectivo id       |
+| POST   |/doador/{idCampanha}               | Realiza uma doação à campanha pelo Id da mesma    |
+
+</div>
 <h2>Gostaria de Falar Conosco?</h2>
 <address>
 Clique no nome dos desenvolvedores para enviar um e-mail
