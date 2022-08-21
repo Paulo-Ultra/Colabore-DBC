@@ -59,8 +59,7 @@ public class AutenticacaoController {
 
     @Operation(summary = "realiza a listagem de todas as campanhas", description = "lista de todas as campanhas no banco de dados")
     @PostMapping("/cadastrar")
-    public String criarUsuario(@Valid @RequestBody UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {
-//        return ResponseEntity.ok(usuarioService.adicionar(usuarioCreateDTO));
+    public String criarUsuario(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO) throws RegraDeNegocioException {
 
         usuarioService.adicionar(usuarioCreateDTO);
 
@@ -85,7 +84,7 @@ public class AutenticacaoController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> criarFotoUsuario(@Valid @NotNull @ModelAttribute MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
+    public ResponseEntity<Void> criarFotoUsuario(@ModelAttribute @Valid MultipartFile multipartFile) throws AmazonS3Exception, RegraDeNegocioException, IOException {
         usuarioService.adicionarFoto(multipartFile);
         return ResponseEntity.ok().build();
     }

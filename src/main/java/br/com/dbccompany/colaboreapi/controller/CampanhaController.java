@@ -33,7 +33,7 @@ public class CampanhaController {
     private final CampanhaService campanhaService;
 
     @PostMapping("/cadastrar")
-    public ResponseEntity<CampanhaDTO> cadastrar (@Valid @RequestBody CampanhaDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaException {
+    public ResponseEntity<CampanhaDTO> cadastrar (@RequestBody @Valid CampanhaDTO campanhaCreateDTO) throws RegraDeNegocioException, CampanhaException {
         return new ResponseEntity<>(campanhaService.adicionar(campanhaCreateDTO), HttpStatus.CREATED);
     }
 
@@ -42,7 +42,7 @@ public class CampanhaController {
             method = POST,
             consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
     )
-    public ResponseEntity<Void> cadastrarFoto (@Valid @NotNull @ModelAttribute MultipartFile multipartFile,
+    public ResponseEntity<Void> cadastrarFoto (@ModelAttribute @Valid @NotNull MultipartFile multipartFile,
                                                @RequestParam Integer idCampanha) throws AmazonS3Exception, CampanhaException, IOException {
         campanhaService.adicionarFoto(idCampanha, multipartFile);
         return ResponseEntity.ok().build();
@@ -56,7 +56,7 @@ public class CampanhaController {
 
     @PutMapping("/{idCampanha}")
     public ResponseEntity<CampanhaDTO> editar(@PathVariable("idCampanha") Integer idCampanha,
-                                              @Valid @RequestBody CampanhaDTO campanhaDTO) throws CampanhaException, RegraDeNegocioException {
+                                              @RequestBody @Valid CampanhaDTO campanhaDTO) throws CampanhaException, RegraDeNegocioException {
         return new ResponseEntity<>(campanhaService.editar(idCampanha, campanhaDTO), HttpStatus.OK);
     }
 

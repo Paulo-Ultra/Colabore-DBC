@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -16,11 +17,11 @@ public class DoadorCampanhaDTO {
     private Integer idUsuario;
 
     @Schema(description = "Valor total doado")
-    @NotEmpty
+    @NotNull
     private BigDecimal valor;
 
     @Schema(description = "Nome do usuário")
-    @NotEmpty
+    @NotNull
     private String nome;
 
     private String foto;

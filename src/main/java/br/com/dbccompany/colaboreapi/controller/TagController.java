@@ -24,7 +24,7 @@ public class TagController {
 
     @Operation(summary = "Adiciona uma tag.", description = "Adiciona uma tag dentro do banco de dados.")
     @PostMapping()
-    public ResponseEntity<TagEntity> adicionar(@Valid @RequestBody TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
+    public ResponseEntity<TagEntity> adicionar(@RequestBody @Valid TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {
         return ResponseEntity.ok(tagService.adicionar(tagCreateDTO));
     }
 
