@@ -13,7 +13,7 @@ public class DoadorCreateDTO {
     private Integer idUsuario;
 
     @NotNull
-    @Schema(description = "Valor total doado")
+    @Schema(description = "Valor total doado", example = "500")
     private BigDecimal valor;
 
 }
