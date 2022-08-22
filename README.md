@@ -15,6 +15,8 @@ O objetivo do projeto é permitir que os colaboradores da DBC possam participar 
 <p>Por tratar-se de uma API Rest ela estabelece uma comunicação stateless entre cliente e servidor. Isso significa que nenhuma informação do cliente é armazenada entre solicitações GET e todas as solicitações são separadas e desconectadas.</p>
 <h2>Diagrama de Entidade Relacionamento</h2>
 <img src="https://user-images.githubusercontent.com/92181625/185949045-408d500a-8960-4070-b841-593fe20c7c94.png">
+<h2>Diagrama de Classes</h2>
+<img src="https://user-images.githubusercontent.com/92181625/186011341-f62b57b5-7160-416d-b475-1c9f2651cca1.png">
 
 <h2>📁 Diretórios e arquivos</h2>
 
