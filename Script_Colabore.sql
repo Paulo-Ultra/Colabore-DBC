@@ -24,8 +24,8 @@ create table campanha
     foto_capa                text          not null,
     encerrar_automaticamente boolean       not null,
     status_meta              boolean       not null,
-    data_limite              date          not null,
-    ultima_alteracao         date          not null,
+    data_limite              timestamp     not null,
+    ultima_alteracao         timestamp     not null,
     primary key (id_campanha),
     constraint fk_campanha_usuario
         foreign KEY (id_usuario)
