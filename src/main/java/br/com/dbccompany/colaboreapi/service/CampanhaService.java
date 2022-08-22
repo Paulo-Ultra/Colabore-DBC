@@ -91,6 +91,7 @@ public class CampanhaService {
         Set<TagEntity> tagEntities = getTagEntitiesByNome(campanhaDTO);
 
         campanhaRecuperada.setUltimaAlteracao(LocalDateTime.now());
+        campanhaRecuperada.setDataLimite(campanhaDTO.getDataLimite());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
         campanhaRecuperada.setTagEntities(tagEntities);
         verificaCriadorDaCampanha(id);
