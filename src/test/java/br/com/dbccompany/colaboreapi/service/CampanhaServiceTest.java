@@ -206,6 +206,19 @@ public class CampanhaServiceTest {
     }
 
     @Test
+    public void deveTestarAdicionarFotoNull() throws AmazonS3Exception, CampanhaException, IOException {
+        CampanhaEntity campanhaEntity = getCampanhaEntityStatusEncerrada();
+
+        final MultipartFile mockFile = mock(MultipartFile.class);
+
+        when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));
+        when(campanhaRepository.save(any(CampanhaEntity.class))).thenReturn(campanhaEntity);
+
+        campanhaService.adicionarFoto(campanhaEntity.getIdUsuario(), null);
+
+        assertNotNull(mockFile);
+    }
+    @Test
     public void deveTestarAdicionarFotoComSucesso() throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = getCampanhaEntityStatusEncerrada();
 
