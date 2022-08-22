@@ -12,8 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CampanhaCreateComFotoDTO {
-
-    @NotNull
+    
     @Schema(description = "Foto da campanha.")
     private MultipartFile fotoCampanha;
 }

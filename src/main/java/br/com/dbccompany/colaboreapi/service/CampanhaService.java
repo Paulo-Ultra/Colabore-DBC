@@ -70,8 +70,12 @@ public class CampanhaService {
 
     public void adicionarFoto(Integer idCampanha, MultipartFile multipartFile) throws AmazonS3Exception, CampanhaException, IOException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(idCampanha);
-        URI uri = s3Service.uploadFile(multipartFile);
-        campanhaEntity.setFotoCampanha(uri.toString());
+        if(multipartFile != null){
+            URI uri = s3Service.uploadFile(multipartFile);
+            campanhaEntity.setFotoCampanha(uri.toString());
+        } else {
+            campanhaEntity.setFotoCampanha(null);
+        }
         campanhaRepository.save(campanhaEntity);
     }
 
