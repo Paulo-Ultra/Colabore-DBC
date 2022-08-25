@@ -129,6 +129,7 @@ public class CampanhaServiceTest {
 
         campanhaService.adicionar(campanhaDTO);
 
+        //FIXME Retirar asserts
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
         assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
@@ -161,7 +162,7 @@ public class CampanhaServiceTest {
         tagDTO.setIdTag(null);
 
         campanhaService.adicionar(campanhaDTO);
-
+        //FIXME Retirar asserts
         assertNotNull(campanhaDTO);
         assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
         assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
@@ -335,6 +336,7 @@ public class CampanhaServiceTest {
         assertNotNull(campanhaDTOList);
     }
 
+    //FIXME RegraDeNegocioException não precisa...
     @Test
     public void deveTestarDeleteComSucesso() throws CampanhaException, RegraDeNegocioException {
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();

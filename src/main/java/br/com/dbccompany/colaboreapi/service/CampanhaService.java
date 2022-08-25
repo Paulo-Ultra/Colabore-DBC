@@ -168,6 +168,7 @@ public class CampanhaService {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaException("Campanha não encontrada."));
     }
 
+    //FIXME metodo deve ser verbo (verificar)
     public void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaException {
         campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdLoggedUser(), idCampanha)
                 .stream()

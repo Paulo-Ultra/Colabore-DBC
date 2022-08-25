@@ -103,7 +103,7 @@ public class DoadorServiceTest {
         when(campanhaService.buscarIdCampanha(anyInt())).thenReturn(campanhaEntity);
 
         DoadorDTO doadorDTO = doadorService.adicionar(campanhaEntity.getIdCampanha(), doadorCreateDTO);
-
+        //FIXME Retirar asserts
         assertNotNull(doadorDTO);
         assertEquals(new BigDecimal(500), doadorDTO.getValor());
         assertEquals(doadorEntity.getIdUsuario(), doadorDTO.getIdUsuario());
