@@ -98,7 +98,7 @@ public class CampanhaService {
         campanhaRecuperada.setDataLimite(campanhaDTO.getDataLimite());
         campanhaRecuperada.setIdUsuario(usuarioCampanha.getIdUsuario());
         campanhaRecuperada.setTagEntities(tagEntities);
-        verificaCriadorDaCampanha(id);
+        verificarCriadorDaCampanha(id);
 
         return getCampanhaByIdDTO(campanhaRepository.save(campanhaRecuperada));
     }
@@ -119,7 +119,7 @@ public class CampanhaService {
 
     public void deletar(Integer id) throws CampanhaException {
         CampanhaEntity campanhaEntity = buscarIdCampanha(id);
-        verificaCriadorDaCampanha(id);
+        verificarCriadorDaCampanha(id);
         campanhaRepository.delete(campanhaEntity);
     }
 
@@ -168,8 +168,7 @@ public class CampanhaService {
         return campanhaRepository.findById(id).orElseThrow(() -> new CampanhaException("Campanha não encontrada."));
     }
 
-    //FIXME metodo deve ser verbo (verificar)
-    public void verificaCriadorDaCampanha(Integer idCampanha) throws CampanhaException {
+    public void verificarCriadorDaCampanha(Integer idCampanha) throws CampanhaException {
         campanhaRepository.findAllByIdUsuarioAndIdCampanha(usuarioService.getIdLoggedUser(), idCampanha)
                 .stream()
                 .findFirst()

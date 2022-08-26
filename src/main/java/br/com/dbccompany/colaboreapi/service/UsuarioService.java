@@ -71,7 +71,6 @@ public class UsuarioService {
         }
     }
 
-    //FIXME parâmetro não utilizado
     public UsuarioDTO findLoginById(Integer idUsuario) throws RegraDeNegocioException {
         UsuarioEntity usuarioEntity = findById(getIdLoggedUser());
         return convertToDTO(usuarioEntity);

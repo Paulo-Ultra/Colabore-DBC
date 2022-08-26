@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-//FIXME remover imports não usados
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.List;
 
@@ -70,10 +68,9 @@ public class CampanhaController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //FIXME método deve começar com letra minúscula
     @Operation(summary = "Realiza a listagem da campanha pelo id informado.", description = "Lista as informações da campanha pelo seu respectivo id.")
     @GetMapping("/campanhaPeloId")
-    public ResponseEntity<CampanhaDTO> CampanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaException {
+    public ResponseEntity<CampanhaDTO> campanhaPeloId(@RequestParam Integer idCampanha) throws CampanhaException {
         return new ResponseEntity<>(campanhaService.localizarCampanha(idCampanha), HttpStatus.OK);
     }
 

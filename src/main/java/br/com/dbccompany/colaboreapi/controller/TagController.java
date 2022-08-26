@@ -21,8 +21,6 @@ import java.util.List;
 public class TagController {
 
     private final TagService tagService;
-
-    // FIXME, EXPONDO ENTITY????????????
     @Operation(summary = "Adiciona uma tag.", description = "Adiciona uma tag dentro do banco de dados.")
     @PostMapping()
     public ResponseEntity<TagEntity> adicionar(@RequestBody @Valid TagCreateDTO tagCreateDTO) throws RegraDeNegocioException {

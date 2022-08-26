@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -128,18 +127,6 @@ public class CampanhaServiceTest {
         campanhaDTO.setArrecadacao(new BigDecimal(50));
 
         campanhaService.adicionar(campanhaDTO);
-
-        //FIXME Retirar asserts
-        assertNotNull(campanhaDTO);
-        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
-        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
-        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
-        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
-        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
-        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
-        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
-        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
-        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
     }
 
     @Test(expected = CampanhaException.class)
@@ -162,17 +149,6 @@ public class CampanhaServiceTest {
         tagDTO.setIdTag(null);
 
         campanhaService.adicionar(campanhaDTO);
-        //FIXME Retirar asserts
-        assertNotNull(campanhaDTO);
-        assertEquals(campanhaEntity.getIdCampanha(), campanhaDTO.getIdCampanha());
-        assertEquals(campanhaEntity.getArrecadacao(), campanhaDTO.getArrecadacao());
-        assertEquals(campanhaEntity.getMeta(), campanhaDTO.getMeta());
-        assertEquals(campanhaEntity.getFotoCampanha(), campanhaDTO.getFotoCampanha());
-        assertEquals(campanhaEntity.getEncerrarAutomaticamente(), campanhaDTO.getEncerrarAutomaticamente());
-        assertEquals(campanhaEntity.getDataLimite(), campanhaDTO.getDataLimite());
-        assertEquals(campanhaEntity.getStatusMeta(), campanhaDTO.getStatusMeta());
-        assertEquals(campanhaEntity.getDescricao(), campanhaDTO.getDescricao());
-        assertEquals(campanhaEntity.getTitulo(), campanhaDTO.getTitulo());
     }
 
     @Test
@@ -335,10 +311,8 @@ public class CampanhaServiceTest {
         List<CampanhaDTO> campanhaDTOList = campanhaService.listaDeCampanhasByUsuarioLogado();
         assertNotNull(campanhaDTOList);
     }
-
-    //FIXME RegraDeNegocioException não precisa...
     @Test
-    public void deveTestarDeleteComSucesso() throws CampanhaException, RegraDeNegocioException {
+    public void deveTestarDeleteComSucesso() throws CampanhaException {
         CampanhaEntity campanhaEntity = getCampanhaEntityEncerraAutomatico();
 
         when(campanhaRepository.findById(anyInt())).thenReturn(Optional.of(campanhaEntity));

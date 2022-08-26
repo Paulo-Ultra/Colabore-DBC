@@ -198,8 +198,6 @@ public class UsuarioServiceTest {
         usuarioEntity.setIdUsuario(99);
 
         UsuarioDTO usuarioDTO = usuarioService.findLoginById(usuarioEntity.getIdUsuario());
-        //FIXME retirar assert
-        assertNotNull(usuarioDTO);
     }
 
     public static UsuarioEntity getUsuarioEntity() {

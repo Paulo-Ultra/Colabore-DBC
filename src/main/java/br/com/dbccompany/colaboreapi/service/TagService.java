@@ -2,7 +2,6 @@ package br.com.dbccompany.colaboreapi.service;
 
 import br.com.dbccompany.colaboreapi.dto.tag.TagCreateDTO;
 import br.com.dbccompany.colaboreapi.dto.tag.TagDTO;
-
 import br.com.dbccompany.colaboreapi.entity.TagEntity;
 import br.com.dbccompany.colaboreapi.exceptions.RegraDeNegocioException;
 import br.com.dbccompany.colaboreapi.repository.TagRepository;
